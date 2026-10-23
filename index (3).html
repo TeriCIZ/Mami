@@ -1,0 +1,1952 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#21161c">
+<meta name="description" content="Mamince – klidné místo na dýchání, uklidňující zvuky, jednoduché hry a pomoc s usínáním.">
+<title>Mamince – klid na dobrou noc</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --acc:240,181,138;   /* meruňková */
+  --acc2:232,160,168;  /* růžová */
+  --bg:#1d1418; --bg2:#2b1f26; --card:rgba(255,236,224,.05); --line:rgba(255,226,206,.14);
+  --text:#f6ece5; --muted:#cdb9ae; --accent:rgb(var(--acc)); --accent2:rgb(var(--acc2));
+  --serif:"Lora",Georgia,"Times New Roman",serif;
+  --display:"Cormorant Garamond","Lora",Georgia,serif;
+  --sans:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:
+    radial-gradient(900px 600px at 15% -10%,rgba(232,160,168,.20),transparent 60%),
+    radial-gradient(900px 700px at 90% 0%,rgba(240,181,138,.14),transparent 55%),
+    var(--bg) fixed;
+  background-color:var(--bg); color:var(--text);
+  font-family:var(--sans); font-size:17px; -webkit-font-smoothing:antialiased;
+  min-height:100vh; display:flex; flex-direction:column; user-select:none; -webkit-user-select:none;
+}
+button,select,input{font:inherit;color:inherit}
+button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:22px 16px 14px;max-width:780px;width:100%;margin:0 auto;flex-wrap:wrap}
+.brand{font-family:var(--display);font-style:italic;font-weight:600;font-size:42px;line-height:1;display:flex;align-items:center;gap:12px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand small{display:block;font-family:var(--sans);font-style:normal;font-weight:400;font-size:14px;color:var(--muted);margin-top:6px}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:15px}
+.controls select{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 14px;color:var(--text)}
+.controls select option{background:var(--bg2)}
+#timeLeft{min-width:44px;font-variant-numeric:tabular-nums}
+.sound{display:flex;align-items:center;gap:8px;border-radius:999px;padding:10px 18px;cursor:pointer;font-weight:600;
+  background:rgba(var(--acc),.16);border:1px solid rgba(var(--acc),.5);color:var(--text);transition:background .3s,border-color .3s}
+.sound svg{width:22px;height:22px}
+.sound[aria-pressed=true]{background:var(--card);border-color:var(--line);color:var(--muted)}
+.sound .off{display:none}
+.sound[aria-pressed=true] .on{display:none}
+.sound[aria-pressed=true] .off{display:inline}
+nav{display:flex;gap:8px;justify-content:center;padding:6px 16px 0;flex-wrap:wrap}
+nav button,.chip{background:transparent;border:1px solid var(--line);border-radius:999px;padding:10px 20px;color:var(--muted);cursor:pointer;transition:background .3s,color .3s,border-color .3s}
+nav button{font-size:17px}
+nav button[aria-selected=true],.chip[aria-checked=true]{background:rgba(var(--acc),.15);color:var(--text);border-color:rgba(var(--acc),.5)}
+main{flex:1;max-width:780px;width:100%;margin:0 auto;padding:18px 16px;display:flex;flex-direction:column}
+section{display:none;flex:1;flex-direction:column;align-items:center}
+section.active{display:flex}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.hint{color:var(--muted);font-size:16px;line-height:1.6;text-align:center;max-width:480px;margin:16px auto 0}
+.primary{background:linear-gradient(135deg,rgba(var(--acc),.32),rgba(var(--acc2),.28));border:1px solid rgba(var(--acc),.6);border-radius:999px;padding:14px 40px;cursor:pointer;font-size:18px;font-weight:600}
+.ghost{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 20px;cursor:pointer;color:var(--muted)}
+
+/* domů */
+.hello{font-family:var(--display);font-style:italic;font-weight:500;font-size:40px;text-align:center;margin:6px 0 4px}
+.sub{color:var(--muted);text-align:center;margin:0 0 20px;font-size:17px}
+.moods{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;width:100%}
+.mood{position:relative;overflow:hidden;text-align:left;cursor:pointer;border-radius:22px;padding:22px 20px 20px;border:1px solid var(--line);
+  background:linear-gradient(150deg,rgba(var(--c),.22),rgba(var(--c),.05) 70%);transition:transform .3s,border-color .3s}
+.mood:hover{border-color:rgba(var(--c),.6)}
+.mood:active{transform:scale(.98)}
+.mood b{display:block;font-family:var(--display);font-weight:600;font-size:28px;line-height:1.1;margin-bottom:6px}
+.mood span{color:var(--muted);font-size:15px;line-height:1.45}
+.mood i{position:absolute;right:-18px;top:-18px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(var(--c),.45),transparent 70%)}
+.plan{width:100%;max-width:560px;margin:0 auto;display:none;flex-direction:column}
+.plan.open{display:flex}
+.plan h2{font-family:var(--display);font-style:italic;font-weight:600;font-size:38px;margin:4px 0 6px;text-align:center}
+.plan .intro{color:var(--muted);text-align:center;margin:0 0 18px;line-height:1.6}
+.step{display:flex;gap:14px;align-items:center;text-align:left;cursor:pointer;width:100%;margin-bottom:10px;padding:16px 18px;border-radius:18px;
+  background:var(--card);border:1px solid var(--line);transition:border-color .3s,background .3s}
+.step:hover{border-color:rgba(var(--acc),.5)}
+.step.did{background:rgba(var(--acc),.08);border-color:rgba(var(--acc),.35)}
+.step em{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-family:var(--display);font-size:21px;font-weight:600;
+  background:rgba(var(--acc),.18);color:var(--text)}
+.step.did em{background:var(--accent);color:#2a1a1f}
+.step b{display:block;font-weight:600;font-size:17px}
+.step small{display:block;color:var(--muted);font-size:15px;margin-top:2px;line-height:1.4}
+
+/* dýchání */
+.stage{position:relative;width:min(340px,80vw);aspect-ratio:1;margin:20px auto;display:grid;place-items:center}
+.ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(255,230,210,.16)}
+.orb{position:absolute;width:100%;height:100%;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,rgba(var(--acc),.62),rgba(var(--acc2),.30) 55%,rgba(var(--acc2),.06) 75%,transparent 76%);
+  box-shadow:0 0 90px rgba(var(--acc),.16);transform:scale(.45);will-change:transform}
+.label{position:relative;text-align:center;pointer-events:none}
+#phase{font-family:var(--display);font-size:36px;font-weight:600}
+#count{font-size:17px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums;min-height:1.2em}
+.opts{display:flex;gap:20px;justify-content:center;color:var(--muted);font-size:16px;margin-top:16px;flex-wrap:wrap}
+.opts label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.opts input{width:20px;height:20px;accent-color:var(--accent)}
+#cycles{color:var(--muted);font-size:15px;margin-top:8px;min-height:1.2em}
+
+/* zvuky */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;width:100%;margin-top:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;transition:border-color .4s,background .4s}
+.card.on{border-color:rgba(var(--acc),.5);background:rgba(var(--acc),.08)}
+.card h3{margin:0;font-family:var(--display);font-size:23px;font-weight:600;font-weight:500;display:flex;justify-content:space-between;align-items:baseline}
+.card h3 span{font-family:var(--sans);color:var(--muted);font-weight:400;font-size:14px;font-variant-numeric:tabular-nums}
+.card p{margin:4px 0 10px;color:var(--muted);font-size:15px}
+input[type=range]{width:100%;accent-color:var(--accent);height:32px}
+.presets{margin:4px 0 14px}
+
+/* hry */
+.gamewrap{position:relative;width:100%;flex:1;min-height:420px;border-radius:22px;overflow:hidden;border:1px solid var(--line);
+  background:radial-gradient(800px 500px at 50% 110%,#3a2a33,#150e13 70%)}
+#cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:pointer}
+.gameinfo{position:absolute;left:0;right:0;top:14px;text-align:center;color:var(--muted);font-size:16px;pointer-events:none;transition:opacity 2s;padding:0 12px}
+.gamecount{position:absolute;right:14px;bottom:12px;color:var(--muted);font-size:14px;pointer-events:none}
+
+/* usínání */
+.sleepgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;width:100%}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-align:left;cursor:pointer;transition:border-color .3s,background .3s}
+.tile:hover{border-color:rgba(var(--acc),.45)}
+.tile b{display:block;font-family:var(--display);font-weight:600;font-size:25px;margin-bottom:6px}
+.tile span{color:var(--muted);font-size:15px;line-height:1.5}
+.panel{width:100%;max-width:580px;margin:8px auto 0;text-align:center;display:none;flex-direction:column;align-items:center}
+.panel.open{display:flex}
+.big{font-family:var(--serif);font-size:25px;line-height:1.6;min-height:6.5em;display:flex;align-items:center;justify-content:center;padding:10px 6px;transition:opacity 1.2s}
+.word{font-family:var(--display);font-style:italic;font-weight:500;font-size:56px;min-height:3em;display:flex;align-items:center;justify-content:center;transition:opacity 1.5s}
+.dots{display:flex;gap:6px;justify-content:center;margin:6px 0 14px;flex-wrap:wrap}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dots i.done{background:var(--accent)}
+textarea{width:100%;min-height:160px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;color:var(--text);font-family:var(--serif);font-size:19px;line-height:1.5;resize:vertical;user-select:text;-webkit-user-select:text}
+.back{margin-top:16px}
+#dark{position:fixed;inset:0;background:#000;z-index:100;display:none;place-items:center;cursor:pointer}
+#dark.on{display:grid}
+#dark .dot{width:14px;height:14px;border-radius:50%;background:#4a3036;animation:pulse 11s ease-in-out infinite}
+#dark p{position:absolute;bottom:40px;left:0;right:0;text-align:center;color:#4a3a3e;font-size:16px;transition:opacity 3s}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.35}45%{transform:scale(2.4);opacity:.8}}
+.aa{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 15px;cursor:pointer;color:var(--muted);font-family:var(--serif);font-size:17px}
+.aa[aria-pressed=true]{color:var(--text);border-color:rgba(var(--acc),.5)}
+body.large header,body.large nav,body.large main,body.large footer{zoom:1.2}
+
+.install{margin-top:18px;display:flex;gap:14px;align-items:center;justify-content:space-between;padding:18px 20px;border-radius:20px;border:1px dashed rgba(var(--acc),.45);background:rgba(var(--acc),.06)}
+.install[hidden]{display:none}
+.install b{display:block;font-family:var(--display);font-size:24px;font-weight:600}
+.install span{color:var(--muted);font-size:15px;line-height:1.4}
+.install .primary{padding:12px 24px;flex:none}
+#toast.long{border-radius:18px;max-width:90vw;width:340px;text-align:center;line-height:1.5}
+.share{display:grid;place-items:center;padding:9px 12px}
+.share svg{width:20px;height:20px}
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--bg2);border:1px solid rgba(var(--acc),.5);color:var(--text);
+  padding:12px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;z-index:90}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+/* hormony */
+.care{font-size:14px;opacity:.85;margin-top:8px}
+.kstage{position:relative;width:min(230px,62vw);aspect-ratio:1;margin:18px auto;display:grid;place-items:center}
+#kOrb{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(var(--acc2),.6),rgba(var(--acc),.22) 58%,rgba(var(--acc),.05) 72%,transparent 73%);box-shadow:0 0 70px rgba(var(--acc2),.14)}
+#kPhase{font-family:var(--display);font-size:34px;font-weight:600}
+#kCount{color:var(--muted);font-size:17px;margin-top:4px;font-variant-numeric:tabular-nums;min-height:1.2em}
+.ex{text-align:center;margin:6px 0 18px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+#exNum{color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums}
+#exName{font-family:var(--display);font-size:36px;font-weight:600;line-height:1.15}
+#exDesc{font-size:18px;line-height:1.55;color:var(--muted);max-width:460px}
+#exTime{font-family:var(--display);font-size:60px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:6px}
+#exPrev,#exNext{font-size:24px;width:52px;padding:8px 0}
+.tips{list-style:none;padding:0;margin:0 0 18px;text-align:left;width:100%}
+.tips li{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-bottom:8px;line-height:1.5}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:12px 16px 22px;opacity:.75}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tm{display:flex;align-items:center;gap:8px}
+.lg select{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 12px;color:var(--text);font-weight:600}
+.lg select option{background:var(--bg2)}
+#timeLeft:empty{display:none}
+@media (max-width:520px){ .brand{font-size:38px} .controls{width:100%;display:grid;grid-template-columns:1fr auto auto;gap:8px} .lg{order:6} .lg select{height:100%} .sound{justify-content:center} .tm{order:5;grid-column:1/3} .tm select{flex:1;padding:10px 14px} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M20.5 4.5a11.5 11.5 0 1 0 7 19.8A12.5 12.5 0 0 1 20.5 4.5z" fill="rgb(240,181,138)" opacity=".9"/><circle cx="25" cy="8" r="1.3" fill="rgb(246,236,229)"/><circle cx="28.5" cy="14" r=".9" fill="rgb(246,236,229)" opacity=".7"/></svg>
+    <div>Mamince<small>klid na dobrou noc</small></div>
+  </div>
+  <div class="controls">
+    <button class="sound" id="mute" aria-pressed="false" title="Zapnout nebo vypnout všechen zvuk">
+      <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 6 6"/><path d="m22 9-6 6"/></svg>
+      <span class="on">Zvuk zapnutý</span><span class="off">Zvuk vypnutý</span>
+    </button>
+    <label class="tm"><span class="vh">Usínací časovač</span>
+    <select id="sleepTimer">
+      <option value="0">Časovač: vypnuto</option>
+      <option value="10">10 min</option>
+      <option value="20">20 min</option>
+      <option value="30">30 min</option>
+      <option value="45">45 min</option>
+      <option value="60">60 min</option>
+      <option value="90">90 min</option>
+    </select><span id="timeLeft"></span></label>
+    <label class="lg"><span class="vh" id="langLbl">Jazyk</span><select id="lang"><option value="cs">CS</option><option value="en">EN</option><option value="sl">SL</option><option value="hr">HR</option></select></label>
+    <button class="aa" id="aa" title="Větší písmo" aria-pressed="false">Aa</button>
+    <button class="aa share" id="share" title="Sdílet" aria-label="Sdílet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/></svg></button>
+  </div>
+</header>
+
+<nav role="tablist">
+  <button role="tab" data-tab="home" aria-selected="true">Domů</button>
+  <button role="tab" data-tab="breath" aria-selected="false">Dýchání</button>
+  <button role="tab" data-tab="sounds" aria-selected="false">Zvuky</button>
+  <button role="tab" data-tab="game" aria-selected="false">Hry</button>
+  <button role="tab" data-tab="sleep" aria-selected="false">Usínání</button>
+  <button role="tab" data-tab="horm" aria-selected="false">Hormony</button>
+</nav>
+
+<main>
+  <!-- DÝCHÁNÍ -->
+  <section id="home" class="active" role="tabpanel">
+    <div id="moodMenu" style="width:100%">
+      <div class="hello" id="hello">Dobrý večer</div>
+      <p class="sub"><span id="helloLine"></span> Jak se teď cítíš? Vyber, co je ti nejbližší.</p>
+      <div class="moods" id="moods"></div>
+      <div class="install" id="install" hidden>
+        <div><b>Přidat na plochu</b><span>Aplikace bude mít vlastní ikonku a otevře se jedním klepnutím.</span></div>
+        <button class="primary" id="installBtn">Přidat</button>
+      </div>
+    </div>
+    <div class="plan" id="plan">
+      <h2 id="planTitle"></h2>
+      <p class="intro" id="planIntro"></p>
+      <div id="planSteps"></div>
+      <div class="row" style="margin-top:8px"><button class="ghost" id="planBack">Zpět na výběr</button></div>
+    </div>
+  </section>
+
+  <section id="breath" role="tabpanel">
+    <div class="row" id="patterns" role="radiogroup"></div>
+    <div class="stage" id="stage">
+      <div class="ring"></div>
+      <div class="orb" id="orb"></div>
+      <div class="label"><div id="phase">Připraveno</div><div id="count"></div></div>
+    </div>
+    <button class="primary" id="breathBtn">Začít</button>
+    <div class="opts">
+      <label><input type="checkbox" id="chime" checked> Jemný tón</label>
+      <label><input type="checkbox" id="vibe"> Vibrace</label>
+    </div>
+    <div id="cycles"></div>
+    <p class="hint" id="patternHint"></p>
+  </section>
+
+  <!-- ZVUKY -->
+  <section id="sounds" role="tabpanel">
+    <div class="row presets" id="presets"></div>
+    <div class="grid" id="soundGrid"></div>
+    <div class="row" style="margin-top:16px"><button class="ghost" id="silence">Ztišit vše</button></div>
+    <p class="hint">Zvuky se generují přímo v prohlížeči, nic se nestahuje. Smíchej si vlastní mix – stačí posunout jezdce. Na noc zapni nahoře usínací časovač, zvuk na konci pomalu zeslábne.</p>
+  </section>
+
+  <!-- HRY -->
+  <section id="game" role="tabpanel">
+    <div class="row" id="modes" role="radiogroup" style="margin-bottom:12px"></div>
+    <div class="gamewrap" id="gamewrap">
+      <canvas id="cv"></canvas>
+      <div class="gameinfo" id="gameinfo"></div>
+      <div class="gamecount" id="gamecount"></div>
+    </div>
+    <p class="hint" id="gameHint"></p>
+    <div class="row" style="margin-top:10px"><button class="ghost" id="gameAct"></button></div>
+  </section>
+
+  <!-- USÍNÁNÍ -->
+  <section id="sleep" role="tabpanel">
+    <div class="sleepgrid" id="sleepMenu">
+      <button class="tile" data-open="scan"><b>Uvolnění těla</b><span>Klidný hlas tě provede tělem od chodidel až k hlavě. Asi 7 minut.</span></button>
+      <button class="tile" data-open="shuffle"><b>Míchání myšlenek</b><span>Objevují se klidná slova. Jen si každé představ. Hlava přestane kroužit.</span></button>
+      <button class="tile" data-open="worry"><b>Odlož starosti</b><span>Napiš, co ti leží v hlavě, a odlož to na ráno.</span></button>
+      <button class="tile" id="goDark"><b>Zhasnout obrazovku</b><span>Úplná tma, jen tichá tečka, která pomalu dýchá.</span></button>
+    </div>
+    <p class="hint" id="sleepHint">Tip: nejdřív si v Zvucích pusť třeba „Na spánek“ a nahoře nastav časovač. Pak si vyber, co tady.</p>
+
+    <div class="panel" id="p-scan">
+      <div class="dots" id="scanDots"></div>
+      <div class="big" id="scanText">Lehni si pohodlně. Až budeš chtít, stiskni Začít.</div>
+      <div class="opts" style="margin:0 0 14px"><label><input type="checkbox" id="speak" checked> Číst nahlas</label></div>
+      <button class="primary" id="scanBtn">Začít</button>
+      <button class="ghost back" data-close>Zpět</button>
+    </div>
+
+    <div class="panel" id="p-shuffle">
+      <div class="word" id="word">…</div>
+      <p class="hint" style="margin-top:0">Představ si to, co slovo popisuje. Barvy, zvuk, vůni. Pak přijde další. Nemusíš nic dělat správně.</p>
+      <div class="row" style="margin-top:14px"><button class="primary" id="shuffleBtn">Začít</button></div>
+      <button class="ghost back" data-close>Zpět</button>
+    </div>
+
+    <div class="panel" id="p-worry">
+      <textarea id="worryText" placeholder="Co mi teď leží v hlavě…"></textarea>
+      <div class="row" style="margin-top:12px"><button class="primary" id="worryBtn">Odložit na ráno</button></div>
+      <p class="hint" id="worryMsg"></p>
+      <button class="ghost" id="shelfBtn" style="margin-top:10px">Ukázat odložené</button>
+      <button class="ghost back" data-close>Zpět</button>
+    </div>
+  </section>
+
+  <!-- HORMONY -->
+  <section id="horm" role="tabpanel">
+    <div class="sleepgrid" id="hormMenu">
+      <button class="tile" data-hopen="flash"><b></b><span></span></button>
+      <button class="tile" data-hopen="night"><b></b><span></span></button>
+      <button class="tile" data-hopen="pelvic"><b></b><span></span></button>
+      <button class="tile" data-hopen="move"><b></b><span></span></button>
+    </div>
+    <p class="hint" id="hormHint"></p>
+    <p class="hint care" id="hormCare"></p>
+
+    <div class="panel" id="h-flash">
+      <div class="dots" id="flashDots"></div>
+      <div class="big" id="flashText"></div>
+      <button class="primary" id="flashBtn"></button>
+      <button class="ghost back" data-hclose></button>
+    </div>
+
+    <div class="panel" id="h-pelvic">
+      <div class="row" id="levels" role="radiogroup"></div>
+      <div class="kstage"><div id="kOrb"></div><div class="label"><div id="kPhase"></div><div id="kCount"></div></div></div>
+      <button class="primary" id="pelvicBtn"></button>
+      <p class="hint" id="pelvicHint"></p>
+      <button class="ghost back" data-hclose></button>
+    </div>
+
+    <div class="panel" id="h-move">
+      <p class="hint" id="moveIntro" style="margin-top:0"></p>
+      <div class="ex">
+        <div id="exNum"></div>
+        <div id="exName"></div>
+        <div id="exDesc"></div>
+        <div id="exTime"></div>
+      </div>
+      <div class="row"><button class="ghost" id="exPrev" aria-label="prev">‹</button><button class="primary" id="moveBtn"></button><button class="ghost" id="exNext" aria-label="next">›</button></div>
+      <button class="ghost back" data-hclose></button>
+    </div>
+
+    <div class="panel" id="h-night">
+      <ul class="tips" id="tips"></ul>
+      <div class="row"><button class="primary" id="nightPlay"></button></div>
+      <div class="row" style="margin-top:10px"><button class="ghost" id="nightCalm"></button><button class="ghost" id="nightDark"></button></div>
+      <button class="ghost back" data-hclose></button>
+    </div>
+  </section>
+</main>
+
+<div id="toast" role="status"></div>
+<div id="dark" role="button" aria-label="Rozsvítit obrazovku"><div class="dot"></div><p id="darkMsg">Klepni kamkoli pro návrat</p></div>
+
+<footer>Tahle aplikace není zdravotnická pomůcka. Pokud tě nespavost nebo úzkost trápí dlouhodobě, poraď se s lékařem.</footer>
+
+<script>
+/* ---------- PŘEKLADY / TRANSLATIONS ---------- */
+window.I18N = {
+cs: {
+  speech:'cs-CZ',
+  cycles: n => n === 1 ? '1 cyklus' : n < 5 ? n + ' cykly' : n + ' cyklů',
+  ui: {
+    brand:'Mamince', tagline:'klid na dobrou noc', desc:'Dýchání, uklidňující zvuky, jednoduché hry a pomoc s usínáním.',
+    muteOn:'Zvuk zapnutý', muteOff:'Zvuk vypnutý', muteTitle:'Zapnout nebo vypnout všechen zvuk',
+    timerLabel:'Usínací časovač', timerOff:'Časovač: vypnuto', large:'Větší písmo', share:'Sdílet', lang:'Jazyk',
+    nav_home:'Domů', nav_breath:'Dýchání', nav_sounds:'Zvuky', nav_game:'Hry', nav_sleep:'Usínání',
+    howFeel:'Jak se teď cítíš? Vyber, co je ti nejbližší.',
+    installT:'Přidat na plochu', installD:'Aplikace bude mít vlastní ikonku a otevře se jedním klepnutím.', installBtn:'Přidat',
+    planBack:'Zpět na výběr', ready:'Připraveno', start:'Začít', stop:'Zastavit', again:'Znovu',
+    chime:'Jemný tón', vibe:'Vibrace', silence:'Ztišit vše', volume:'Hlasitost',
+    soundsHint:'Zvuky se generují přímo v prohlížeči, nic se nestahuje. Smíchej si vlastní mix – stačí posunout jezdce. Na noc zapni nahoře usínací časovač, zvuk na konci pomalu zeslábne.',
+    scanT:'Uvolnění těla', scanD:'Klidný hlas tě provede tělem od chodidel až k hlavě. Asi 7 minut.',
+    shuffleT:'Míchání myšlenek', shuffleD:'Objevují se klidná slova. Jen si každé představ. Hlava přestane kroužit.',
+    worryT:'Odlož starosti', worryD:'Napiš, co ti leží v hlavě, a odlož to na ráno.',
+    darkT:'Zhasnout obrazovku', darkD:'Úplná tma, jen tichá tečka, která pomalu dýchá.',
+    sleepHint:'Tip: nejdřív si v Zvucích pusť třeba „Na spánek“ a nahoře nastav časovač. Pak si vyber, co tady.',
+    scanIntro:'Lehni si pohodlně. Až budeš chtít, stiskni Začít.', speak:'Číst nahlas', back:'Zpět',
+    shuffleHint:'Představ si to, co slovo popisuje. Barvy, zvuk, vůni. Pak přijde další. Nemusíš nic dělat správně.',
+    worryPh:'Co mi teď leží v hlavě…', worryBtn:'Odložit na ráno', shelfBtn:'Ukázat odložené',
+    worryEmpty:'Klidně napiš i jen pár slov.', worryDone:'Odloženo. Teď o tom nemusíš přemýšlet, ráno to tu počká.',
+    darkAria:'Rozsvítit obrazovku', darkMsg:'Klepni kamkoli pro návrat',
+    footer:'Tahle aplikace není zdravotnická pomůcka. Pokud tě nespavost nebo úzkost trápí dlouhodobě, poraď se s lékařem.',
+    lit:'rozsvíceno: ', popped:'prasklo: ', consts:'souhvězdí: ',
+    installed:'Hotovo, ikonka je na ploše',
+    iosInstall:'V Safari klepni na Sdílet (čtvereček se šipkou) a pak na „Přidat na plochu“.',
+    androidInstall:'V Chromu klepni vpravo nahoře na tři tečky ⋮ a vyber „Přidat na plochu“ nebo „Instalovat aplikaci“.',
+    shareText:'Dýchání, uklidňující zvuky a jednoduché hry, když nejde usnout.', copied:'Odkaz je zkopírovaný', copyPrompt:'Zkopíruj si odkaz:'
+  },
+  sounds:{ brown:['Hnědý šum','Hluboký a měkký, oblíbený na soustředění'], pink:['Růžový šum','Vyvážený, příjemnější než bílý'], white:['Bílý šum','Ostřejší, dobře přehluší okolí'],
+    rain:['Déšť','Šumění deště za oknem'], ocean:['Moře','Pomalé vlny, asi 7 za minutu'], fan:['Ventilátor','Tiché hučení v pozadí'] },
+  presets:['Na spánek','Na soustředění','U moře','Deštivá noc'],
+  patterns:{
+    box:{ name:'Krabicové 4·4·4·4', hint:'Čtyři stejně dlouhé fáze. Dává hlavě jednoduchý rytmus, když myšlenky běží jedna přes druhou.', ph:['Nádech','Zadrž','Výdech','Zadrž'] },
+    '478':{ name:'Na usnutí 4·7·8', hint:'Dlouhý výdech pomáhá tělu zpomalit. Začni třemi až čtyřmi cykly. Pokud se ti zatočí hlava, vrať se k běžnému dechu.', ph:['Nádech','Zadrž','Výdech'] },
+    coh:{ name:'Rovnoměrné 5,5', hint:'Asi pět a půl dechu za minutu, bez zadržování. Hodí se na pět až deset minut, klidně se zavřenýma očima.', ph:['Nádech','Výdech'] },
+    sigh:{ name:'Povzdech', hint:'Dva nádechy nosem za sebou a pak dlouhý výdech pusou. Rychlé uvolnění, když je toho moc. Stačí pár opakování.', ph:['Nádech','Ještě trochu','Dlouhý výdech'] }
+  },
+  modes:{
+    flies:['Světlušky','Pomalu se dotýkej světlušek. Nic se nedá prohrát.','Táhni prstem po hladině. Každá světluška zazní tónem.',''],
+    bubbles:['Bublinky','Mačkej bubliny. Můžeš i přejíždět prstem.','Když prasknou všechny, přijde nová fólie. Mačkat se dá donekonečna.','Nová fólie'],
+    stars:['Souhvězdí','Klepej na velké hvězdy. Spojí se čárou.','Pořadí je jedno. Když spojíš všechny, souhvězdí se rozzáří a přijde nové.','Jiné hvězdy'],
+    sand:['Zen zahrádka','Táhni prstem a hrab do písku.','Žádný cíl, jen čáry v písku. Když chceš začít znovu, písek uhlaď.','Uhladit']
+  },
+  scan:[
+    'Lehni si pohodlně. Ruce nech volně podél těla. Zavři oči, jestli chceš.',
+    'Pomalu se nadechni nosem… a dlouze vydechni pusou. Ještě jednou. Nikam nespěcháš.',
+    'Všimni si chodidel. Prsty, paty, nárty. Nech je ztěžknout a zabořit se do postele.',
+    'Teď lýtka. Ať jsou měkká a těžká. Není potřeba je držet.',
+    'Kolena a stehna. S každým výdechem se trochu víc uvolní.',
+    'Boky a pánev. Nech postel, ať tě celou nese.',
+    'Břicho. Ať se při dechu volně zvedá a klesá. Nemusíš ho držet.',
+    'Hrudník. Dech přichází a odchází sám. Ty se jen díváš.',
+    'Záda. Od kříže až k lopatkám. Nech je rozlévat se do podložky.',
+    'Ramena. Často v nich nosíme celý den. Nech je klesnout dolů, od uší.',
+    'Paže a lokty. Předloktí. Těžké a teplé.',
+    'Dlaně a prsty. Ať jsou volné, trochu pootevřené.',
+    'Krk a šíje. Ať hlava leží celou vahou na polštáři.',
+    'Čelist. Zuby ať se nedotýkají. Jazyk ať leží volně.',
+    'Tváře a oči. Víčka těžká. Okolí očí měkké.',
+    'Čelo. Ať se vyhladí, jako hladina vody.',
+    'Celé tělo je teď těžké, teplé a klidné. Nemusíš nic dělat.',
+    'Zůstaň tak, jak dlouho chceš. Spánek přijde sám, až bude chtít.'
+  ],
+  words:['jablko','loďka','peřina','les','svíčka','mrak','kočka','čaj','louka','kámen','pírko','jezero','chleba','klubko','lavička',
+    'motýl','deka','strom','hrnek','vlna','mech','šiška','kopec','lampa','zahrada','borovice','med','kapka','rybník',
+    'okno','houba','pláž','vánek','koš','pole','slunečnice','škeble','zvon','meloun','sníh','krajka','polštář','ořech',
+    'mlýn','tulipán','hvězda','cesta','kaštan','ptáček','jablůňka','dýně','věneček','studánka','perníček','lucerna','třešně','maják','konvička','plachetnice'],
+  greets:[
+    ['Dobrou noc','Je hluboká noc. Nemusíš nic, jsem tady.'],
+    ['Dobré ráno','Nový den začíná pomalu.'],
+    ['Dobré dopoledne','Chvilka pro sebe se vždycky hodí.'],
+    ['Dobré odpoledne','Zastav se na pár nádechů.'],
+    ['Dobrý večer','Den se chýlí ke konci.'],
+    ['Dobrou noc','Pomalu se připrav ke spánku.']
+  ],
+  moods:{
+    sleep:{ title:'Nemůžu spát', desc:'Ležím a nejde to. Hlava nechce vypnout.', intro:'Nic nemusíš zvládnout. Stačí jít krok po kroku. Klidně usneš uprostřed.',
+      steps:[['Pusť si tichý šum','Hnědý šum s deštěm. Za 30 minut sám pomalu ztichne.'],['Dýchání 4·7·8','Tři až čtyři pomalé cykly. Dlouhý výdech zklidní tělo.'],
+        ['Uvolnění těla','Klidný hlas tě provede od chodidel až k hlavě.'],['Míchání myšlenek','Když se myšlenky pořád vrací, představuj si jednoduchá slova.'],['Zhasni obrazovku','Telefon zůstane černý a zvuk bude hrát dál.']] },
+    stress:{ title:'Jsem ve stresu', desc:'Sevřený žaludek, rychlý dech, starosti.', intro:'Nejdřív tělo, potom hlava. Pár minut stačí.',
+      steps:[['Dva povzdechy','Dva nádechy nosem a dlouhý výdech. Nejrychlejší úleva.'],['Krabicové dýchání','Pravidelný rytmus 4·4·4·4 na pár minut.'],
+        ['Odlož starosti','Napiš, co tě trápí. Ráno to tu počká.'],['Moře','Pomalé vlny na pozadí.'],['Zen zahrádka','Hrab do písku. Nic víc.']] },
+    over:{ title:'Je toho na mě moc', desc:'Hluk, lidi, úkoly. Potřebuju vypnout.', intro:'Ubereme podnětů. Méně světla, méně zvuku, jedna jednoduchá věc.',
+      steps:[['Jemný hnědý šum','Přikryje okolní hluk jako deka.'],['Povzdech','Pár opakování a ramena povolí.'],
+        ['Mačkej bublinky','Jednoduchá věc pro ruce, hlava si odpočine.'],['Pět minut tmy','Zhasni obrazovku a jen dýchej s tečkou.']] },
+    restless:{ title:'Neklidná hlava', desc:'Nemůžu se soustředit, myšlenky skáčou.', intro:'Dáme hlavě něco malého, čeho se může chytit.',
+      steps:[['Šum na soustředění','Hnědý a růžový šum. Mnoha lidem s neklidnou hlavou pomáhá.'],['Rovnoměrné dýchání','Nádech a výdech stejně dlouho, bez zadržování.'],
+        ['Spojuj hvězdy','Klidná hra na pár minut.'],['Světlušky','Pomalé dotýkání světel na hladině.']] }
+  }
+},
+
+en: {
+  speech:'en-GB',
+  cycles: n => n === 1 ? '1 round' : n + ' rounds',
+  ui: {
+    brand:'Mamince', tagline:'calm for a good night', desc:'Breathing, calming sounds, simple games and help with falling asleep.',
+    muteOn:'Sound on', muteOff:'Sound off', muteTitle:'Turn all sound on or off',
+    timerLabel:'Sleep timer', timerOff:'Timer: off', large:'Larger text', share:'Share', lang:'Language',
+    nav_home:'Home', nav_breath:'Breathing', nav_sounds:'Sounds', nav_game:'Games', nav_sleep:'Sleep',
+    howFeel:'How are you feeling right now? Choose what feels closest.',
+    installT:'Add to home screen', installD:'The app gets its own icon and opens with one tap.', installBtn:'Add',
+    planBack:'Back to choices', ready:'Ready', start:'Start', stop:'Stop', again:'Again',
+    chime:'Soft tone', vibe:'Vibration', silence:'Silence all', volume:'Volume',
+    soundsHint:'The sounds are made right in your browser, nothing is downloaded. Create your own mix by moving the sliders. At night, set the sleep timer at the top and the sound will slowly fade out at the end.',
+    scanT:'Body relaxation', scanD:'A calm voice guides you through your body, from your feet to your head. About 7 minutes.',
+    shuffleT:'Thought shuffle', shuffleD:'Calm words appear one by one. Just picture each one. Your mind stops circling.',
+    worryT:'Set worries aside', worryD:'Write down what is on your mind and leave it for the morning.',
+    darkT:'Turn off the screen', darkD:'Complete darkness, just a quiet dot breathing slowly.',
+    sleepHint:'Tip: first play “For sleep” in Sounds and set the timer at the top. Then choose something here.',
+    scanIntro:'Lie down comfortably. Press Start whenever you like.', speak:'Read aloud', back:'Back',
+    shuffleHint:'Imagine what the word describes. Colours, sounds, smells. Then the next one comes. There is no right way to do it.',
+    worryPh:'What is on my mind right now…', worryBtn:'Leave it for the morning', shelfBtn:'Show what I set aside',
+    worryEmpty:'Even just a few words are fine.', worryDone:'Set aside. You don’t have to think about it now, it will wait here until morning.',
+    darkAria:'Turn the screen back on', darkMsg:'Tap anywhere to return',
+    footer:'This app is not a medical device. If sleeplessness or anxiety troubles you for a long time, talk to a doctor.',
+    lit:'lit: ', popped:'popped: ', consts:'constellations: ',
+    installed:'Done, the icon is on your home screen',
+    iosInstall:'In Safari, tap Share (the square with an arrow), then “Add to Home Screen”.',
+    androidInstall:'In Chrome, tap the three dots ⋮ at the top right and choose “Add to Home screen” or “Install app”.',
+    shareText:'Breathing, calming sounds and simple games for when sleep won’t come.', copied:'Link copied', copyPrompt:'Copy the link:'
+  },
+  sounds:{ brown:['Brown noise','Deep and soft, a favourite for focus'], pink:['Pink noise','Balanced, gentler than white'], white:['White noise','Sharper, covers background noise well'],
+    rain:['Rain','Rain pattering outside the window'], ocean:['Sea','Slow waves, about 7 a minute'], fan:['Fan','A quiet hum in the background'] },
+  presets:['For sleep','For focus','By the sea','Rainy night'],
+  patterns:{
+    box:{ name:'Box 4·4·4·4', hint:'Four phases of equal length. Gives your mind a simple rhythm when thoughts race over one another.', ph:['Breathe in','Hold','Breathe out','Hold'] },
+    '478':{ name:'For sleep 4·7·8', hint:'A long breath out helps the body slow down. Start with three or four rounds. If you feel dizzy, go back to normal breathing.', ph:['Breathe in','Hold','Breathe out'] },
+    coh:{ name:'Even 5.5', hint:'About five and a half breaths a minute, no holding. Good for five to ten minutes, with your eyes closed if you like.', ph:['Breathe in','Breathe out'] },
+    sigh:{ name:'Sigh', hint:'Two breaths in through the nose, then a long breath out through the mouth. Quick relief when it is all too much. A few rounds are enough.', ph:['Breathe in','A little more','Long breath out'] }
+  },
+  modes:{
+    flies:['Fireflies','Gently touch the fireflies. You can’t lose.','Slide your finger across the water. Each firefly plays a note.',''],
+    bubbles:['Bubbles','Press the bubbles. You can also slide your finger.','When they are all popped, a new sheet arrives. You can pop forever.','New sheet'],
+    stars:['Stars','Tap the big stars. They join with a line.','The order doesn’t matter. Connect them all and the constellation lights up, then a new one appears.','Other stars'],
+    sand:['Zen garden','Slide your finger to rake the sand.','No goal, just lines in the sand. To start again, smooth the sand.','Smooth']
+  },
+  scan:[
+    'Lie down comfortably. Let your arms rest loosely by your sides. Close your eyes if you like.',
+    'Breathe in slowly through your nose… and breathe out long through your mouth. Once more. There is no hurry.',
+    'Notice your feet. Toes, heels, the tops of your feet. Let them grow heavy and sink into the bed.',
+    'Now your calves. Let them be soft and heavy. There is no need to hold them.',
+    'Knees and thighs. With every breath out they relax a little more.',
+    'Hips and pelvis. Let the bed carry all of you.',
+    'Your belly. Let it rise and fall freely with your breath. No need to hold it in.',
+    'Your chest. The breath comes and goes on its own. You are only watching.',
+    'Your back. From the lower back up to the shoulder blades. Let it spread out into the mattress.',
+    'Your shoulders. We often carry the whole day in them. Let them drop down, away from your ears.',
+    'Arms and elbows. Forearms. Heavy and warm.',
+    'Palms and fingers. Let them be loose, slightly open.',
+    'Neck and the back of your neck. Let your head rest with all its weight on the pillow.',
+    'Your jaw. Let your teeth part. Let your tongue rest loosely.',
+    'Cheeks and eyes. Heavy eyelids. Soft around the eyes.',
+    'Your forehead. Let it smooth out, like the surface of water.',
+    'Your whole body is heavy, warm and calm now. You don’t have to do anything.',
+    'Stay like this for as long as you like. Sleep will come on its own, when it is ready.'
+  ],
+  words:['apple','rowboat','blanket','forest','candle','cloud','cat','tea','meadow','pebble','feather','lake','bread','ball of yarn','bench',
+    'butterfly','tree','mug','wave','moss','pine cone','hill','lamp','garden','pine tree','honey','raindrop','pond',
+    'window','mushroom','beach','breeze','basket','field','sunflower','seashell','bell','melon','snow','lace','pillow','walnut',
+    'windmill','tulip','star','path','chestnut','little bird','apple tree','pumpkin','spring','gingerbread','lantern','cherries','lighthouse','teapot','sailboat'],
+  greets:[
+    ['Good night','It is the middle of the night. You don’t have to do anything, I’m here.'],
+    ['Good morning','A new day is starting slowly.'],
+    ['Have a lovely morning','A moment for yourself is always welcome.'],
+    ['Good afternoon','Pause for a few breaths.'],
+    ['Good evening','The day is drawing to a close.'],
+    ['Good night','Slowly get ready for sleep.']
+  ],
+  moods:{
+    sleep:{ title:'I can’t sleep', desc:'Lying awake. My mind won’t switch off.', intro:'You don’t have to manage anything. One step at a time is enough. It’s fine to fall asleep halfway.',
+      steps:[['Play a soft noise','Brown noise with rain. It fades out by itself after 30 minutes.'],['Breathing 4·7·8','Three or four slow rounds. A long breath out calms the body.'],
+        ['Body relaxation','A calm voice guides you from your feet up to your head.'],['Thought shuffle','When thoughts keep coming back, picture simple words.'],['Turn off the screen','The phone stays dark and the sound keeps playing.']] },
+    stress:{ title:'I’m stressed', desc:'Tight stomach, fast breathing, worries.', intro:'Body first, then mind. A few minutes is enough.',
+      steps:[['Two sighs','Two breaths in through the nose, one long breath out. The quickest relief.'],['Box breathing','A steady 4·4·4·4 rhythm for a few minutes.'],
+        ['Set worries aside','Write down what bothers you. It will wait here until morning.'],['Sea','Slow waves in the background.'],['Zen garden','Rake the sand. Nothing more.']] },
+    over:{ title:'It’s all too much', desc:'Noise, people, tasks. I need to switch off.', intro:'Let’s cut down. Less light, less sound, one simple thing.',
+      steps:[['Soft brown noise','Covers the noise around you like a blanket.'],['Sigh','A few rounds and your shoulders let go.'],
+        ['Pop bubbles','Something simple for your hands while your mind rests.'],['Five minutes of darkness','Turn off the screen and just breathe with the dot.']] },
+    restless:{ title:'Restless mind', desc:'I can’t focus, my thoughts keep jumping.', intro:'Let’s give your mind something small to hold on to.',
+      steps:[['Focus noise','Brown and pink noise. Many people with a restless mind find it helps.'],['Even breathing','Breathe in and out for the same length, no holding.'],
+        ['Connect the stars','A calm game for a few minutes.'],['Fireflies','Slowly touching lights on the water.']] }
+  }
+},
+
+sl: {
+  speech:'sl-SI',
+  cycles: n => { const m = n % 100; return n + ' ' + (m === 1 ? 'krog' : m === 2 ? 'kroga' : m === 3 || m === 4 ? 'krogi' : 'krogov'); },
+  ui: {
+    brand:'Mamince', tagline:'mir za lahko noč', desc:'Dihanje, pomirjujoči zvoki, preproste igre in pomoč pri uspavanju.',
+    muteOn:'Zvok vklopljen', muteOff:'Zvok izklopljen', muteTitle:'Vklopi ali izklopi ves zvok',
+    timerLabel:'Časovnik za spanje', timerOff:'Časovnik: izklopljen', large:'Večja pisava', share:'Deli', lang:'Jezik',
+    nav_home:'Domov', nav_breath:'Dihanje', nav_sounds:'Zvoki', nav_game:'Igre', nav_sleep:'Spanje',
+    howFeel:'Kako se počutiš zdaj? Izberi, kar ti je najbližje.',
+    installT:'Dodaj na začetni zaslon', installD:'Aplikacija bo imela svojo ikono in se bo odprla z enim dotikom.', installBtn:'Dodaj',
+    planBack:'Nazaj na izbiro', ready:'Pripravljeno', start:'Začni', stop:'Ustavi', again:'Znova',
+    chime:'Nežen ton', vibe:'Vibriranje', silence:'Utišaj vse', volume:'Glasnost',
+    soundsHint:'Zvoki nastajajo kar v brskalniku, nič se ne prenaša. Zmešaj si svojo mešanico s premikanjem drsnikov. Ponoči zgoraj vklopi časovnik, zvok bo na koncu počasi utihnil.',
+    scanT:'Sprostitev telesa', scanD:'Miren glas te vodi skozi telo od stopal do glave. Približno 7 minut.',
+    shuffleT:'Mešanje misli', shuffleD:'Pojavljajo se mirne besede. Vsako si samo predstavljaj. Glava neha krožiti.',
+    worryT:'Odloži skrbi', worryD:'Zapiši, kar ti leži na duši, in to odloži do jutra.',
+    darkT:'Ugasni zaslon', darkD:'Popolna tema, le tiha pika, ki počasi diha.',
+    sleepHint:'Namig: najprej v Zvokih prižgi »Za spanec« in zgoraj nastavi časovnik. Potem izberi nekaj tukaj.',
+    scanIntro:'Udobno se ulezi. Ko želiš, pritisni Začni.', speak:'Beri na glas', back:'Nazaj',
+    shuffleHint:'Predstavljaj si, kar beseda opisuje. Barve, zvok, vonj. Potem pride naslednja. Ničesar ni treba narediti prav.',
+    worryPh:'Kaj me ta hip teži…', worryBtn:'Odloži do jutra', shelfBtn:'Pokaži odloženo',
+    worryEmpty:'Dovolj je tudi le nekaj besed.', worryDone:'Odloženo. Zdaj ti ni treba misliti na to, do jutra bo počakalo tukaj.',
+    darkAria:'Prižgi zaslon', darkMsg:'Tapni kjerkoli za vrnitev',
+    footer:'Ta aplikacija ni medicinski pripomoček. Če te nespečnost ali tesnoba dalj časa pesti, se posvetuj z zdravnikom.',
+    lit:'prižganih: ', popped:'počenih: ', consts:'ozvezdij: ',
+    installed:'Končano, ikona je na začetnem zaslonu',
+    iosInstall:'V Safariju tapni Deli (kvadratek s puščico) in nato »Dodaj na začetni zaslon«.',
+    androidInstall:'V Chromu tapni tri pikice ⋮ zgoraj desno in izberi »Dodaj na začetni zaslon« ali »Namesti aplikacijo«.',
+    shareText:'Dihanje, pomirjujoči zvoki in preproste igre, ko spanec noče priti.', copied:'Povezava je kopirana', copyPrompt:'Kopiraj povezavo:'
+  },
+  sounds:{ brown:['Rjavi šum','Globok in mehak, priljubljen za zbranost'], pink:['Rožnati šum','Uravnotežen, prijetnejši od belega'], white:['Beli šum','Ostrejši, dobro preglasi okolico'],
+    rain:['Dež','Šumenje dežja za oknom'], ocean:['Morje','Počasni valovi, približno 7 na minuto'], fan:['Ventilator','Tiho brnenje v ozadju'] },
+  presets:['Za spanec','Za zbranost','Ob morju','Deževna noč'],
+  patterns:{
+    box:{ name:'Kvadratno 4·4·4·4', hint:'Štiri enako dolge faze. Glavi da preprost ritem, ko misli drvijo ena čez drugo.', ph:['Vdih','Zadrži','Izdih','Zadrži'] },
+    '478':{ name:'Za spanec 4·7·8', hint:'Dolg izdih pomaga telesu, da se umiri. Začni s tremi ali štirimi krogi. Če se ti zvrti, se vrni k običajnemu dihanju.', ph:['Vdih','Zadrži','Izdih'] },
+    coh:{ name:'Enakomerno 5,5', hint:'Približno pet in pol vdihov na minuto, brez zadrževanja. Primerno za pet do deset minut, lahko z zaprtimi očmi.', ph:['Vdih','Izdih'] },
+    sigh:{ name:'Vzdih', hint:'Dva vdiha skozi nos zapored in nato dolg izdih skozi usta. Hitro olajšanje, ko je vsega preveč. Dovolj je nekaj ponovitev.', ph:['Vdih','Še malo','Dolg izdih'] }
+  },
+  modes:{
+    flies:['Kresničke','Nežno se dotikaj kresničk. Izgubiti ne moreš.','S prstom drsi po gladini. Vsaka kresnička zazveni.',''],
+    bubbles:['Mehurčki','Pritiskaj mehurčke. Lahko tudi drsiš s prstom.','Ko počijo vsi, pride nova folija. Pokaš jih lahko v nedogled.','Nova folija'],
+    stars:['Ozvezdje','Tapkaj po velikih zvezdah. Povežejo se s črto.','Vrstni red ni pomemben. Ko povežeš vse, ozvezdje zasije in pride novo.','Druge zvezde'],
+    sand:['Zen vrt','S prstom grabi po pesku.','Brez cilja, samo črte v pesku. Če želiš začeti znova, pesek zgladi.','Zgladi']
+  },
+  scan:[
+    'Udobno se ulezi. Roke naj ohlapno ležijo ob telesu. Če želiš, zapri oči.',
+    'Počasi vdihni skozi nos… in dolgo izdihni skozi usta. Še enkrat. Nikamor se ti ne mudi.',
+    'Opazi stopala. Prste, pete, narte. Naj postanejo težka in se pogreznejo v posteljo.',
+    'Zdaj meča. Naj bodo mehka in težka. Ni ti jih treba držati.',
+    'Kolena in stegna. Z vsakim izdihom se še malo bolj sprostijo.',
+    'Boki in medenica. Naj te postelja v celoti nosi.',
+    'Trebuh. Naj se ob dihanju prosto dviga in spušča. Ni ga treba stiskati.',
+    'Prsni koš. Dih prihaja in odhaja sam. Ti ga samo opazuješ.',
+    'Hrbet. Od križa do lopatic. Naj se razleze po podlagi.',
+    'Ramena. Pogosto v njih nosimo ves dan. Naj se spustijo navzdol, stran od ušes.',
+    'Roke in komolci. Podlakti. Težke in tople.',
+    'Dlani in prsti. Naj bodo ohlapni, rahlo odprti.',
+    'Vrat in tilnik. Naj glava z vso težo leži na blazini.',
+    'Čeljust. Zobje naj se ne dotikajo. Jezik naj leži sproščeno.',
+    'Lica in oči. Veke so težke. Okoli oči je vse mehko.',
+    'Čelo. Naj se zgladi kot vodna gladina.',
+    'Vse telo je zdaj težko, toplo in mirno. Ničesar ti ni treba narediti.',
+    'Ostani tako, kolikor dolgo želiš. Spanec bo prišel sam, ko bo pripravljen.'
+  ],
+  words:['jabolko','čoln','odeja','gozd','sveča','oblak','mačka','čaj','travnik','kamenček','pero','jezero','kruh','klobčič','klop',
+    'metulj','drevo','skodelica','val','mah','storž','hrib','svetilka','vrt','bor','med','kapljica','ribnik',
+    'okno','goba','plaža','vetrc','košara','polje','sončnica','školjka','zvon','lubenica','sneg','čipka','blazina','oreh',
+    'mlin','tulipan','zvezda','pot','kostanj','ptiček','jablana','buča','studenec','medenjak','lučka','češnje','svetilnik','čajnik','jadrnica'],
+  greets:[
+    ['Lahko noč','Je globoka noč. Ničesar ti ni treba, tukaj sem.'],
+    ['Dobro jutro','Nov dan se začenja počasi.'],
+    ['Lepo dopoldne','Trenutek zase vedno prav pride.'],
+    ['Lepo popoldne','Ustavi se za nekaj vdihov.'],
+    ['Dober večer','Dan se počasi izteka.'],
+    ['Lahko noč','Počasi se pripravi na spanje.']
+  ],
+  moods:{
+    sleep:{ title:'Ne morem spati', desc:'Ležim in ne gre. Glava se noče izklopiti.', intro:'Ničesar ti ni treba zmoči. Dovolj je korak za korakom. Lahko zaspiš kar vmes.',
+      steps:[['Prižgi tih šum','Rjavi šum z dežjem. Po 30 minutah sam počasi utihne.'],['Dihanje 4·7·8','Trije do štirje počasni krogi. Dolg izdih umiri telo.'],
+        ['Sprostitev telesa','Miren glas te vodi od stopal do glave.'],['Mešanje misli','Ko se misli kar naprej vračajo, si predstavljaj preproste besede.'],['Ugasni zaslon','Telefon ostane temen, zvok pa igra naprej.']] },
+    stress:{ title:'Pod stresom sem', desc:'Stisnjen želodec, hitro dihanje, skrbi.', intro:'Najprej telo, nato glava. Nekaj minut je dovolj.',
+      steps:[['Dva vzdiha','Dva vdiha skozi nos in dolg izdih. Najhitrejše olajšanje.'],['Kvadratno dihanje','Enakomeren ritem 4·4·4·4 nekaj minut.'],
+        ['Odloži skrbi','Zapiši, kaj te teži. Do jutra bo počakalo tukaj.'],['Morje','Počasni valovi v ozadju.'],['Zen vrt','Grabi po pesku. Nič drugega.']] },
+    over:{ title:'Vsega je preveč', desc:'Hrup, ljudje, opravila. Moram se izklopiti.', intro:'Zmanjšajmo dražljaje. Manj svetlobe, manj zvoka, ena preprosta stvar.',
+      steps:[['Nežen rjavi šum','Prekrije hrup okoli tebe kot odeja.'],['Vzdih','Nekaj ponovitev in ramena popustijo.'],
+        ['Pokaj mehurčke','Preprosto opravilo za roke, glava pa počiva.'],['Pet minut teme','Ugasni zaslon in samo dihaj s piko.']] },
+    restless:{ title:'Nemirna glava', desc:'Ne morem se zbrati, misli skačejo.', intro:'Dajmo glavi nekaj majhnega, česar se lahko oprime.',
+      steps:[['Šum za zbranost','Rjavi in rožnati šum. Mnogim z nemirno glavo pomaga.'],['Enakomerno dihanje','Vdih in izdih enako dolgo, brez zadrževanja.'],
+        ['Poveži zvezde','Mirna igra za nekaj minut.'],['Kresničke','Počasno dotikanje lučk na gladini.']] }
+  }
+},
+
+hr: {
+  speech:'hr-HR',
+  cycles: n => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? 'ciklus' : 'ciklusa'),
+  ui: {
+    brand:'Mamince', tagline:'mir za laku noć', desc:'Disanje, umirujući zvukovi, jednostavne igre i pomoć pri uspavljivanju.',
+    muteOn:'Zvuk uključen', muteOff:'Zvuk isključen', muteTitle:'Uključi ili isključi sav zvuk',
+    timerLabel:'Tajmer za spavanje', timerOff:'Tajmer: isključen', large:'Veća slova', share:'Podijeli', lang:'Jezik',
+    nav_home:'Početna', nav_breath:'Disanje', nav_sounds:'Zvukovi', nav_game:'Igre', nav_sleep:'Spavanje',
+    howFeel:'Kako se sada osjećaš? Odaberi ono što ti je najbliže.',
+    installT:'Dodaj na početni zaslon', installD:'Aplikacija će imati vlastitu ikonu i otvarat će se jednim dodirom.', installBtn:'Dodaj',
+    planBack:'Natrag na izbor', ready:'Spremno', start:'Počni', stop:'Zaustavi', again:'Ponovno',
+    chime:'Nježan ton', vibe:'Vibracija', silence:'Utišaj sve', volume:'Glasnoća',
+    soundsHint:'Zvukovi nastaju izravno u pregledniku, ništa se ne preuzima. Složi vlastitu mješavinu pomicanjem klizača. Noću gore uključi tajmer, zvuk će na kraju polako utihnuti.',
+    scanT:'Opuštanje tijela', scanD:'Miran glas vodi te kroz tijelo od stopala do glave. Oko 7 minuta.',
+    shuffleT:'Miješanje misli', shuffleD:'Pojavljuju se mirne riječi. Samo zamisli svaku. Glava prestaje kružiti.',
+    worryT:'Odloži brige', worryD:'Zapiši što ti je na umu i ostavi to za jutro.',
+    darkT:'Ugasi zaslon', darkD:'Potpuni mrak, samo tiha točkica koja polako diše.',
+    sleepHint:'Savjet: najprije u Zvukovima pokreni „Za san” i gore postavi tajmer. Zatim odaberi nešto ovdje.',
+    scanIntro:'Udobno se smjesti. Kad želiš, pritisni Počni.', speak:'Čitaj naglas', back:'Natrag',
+    shuffleHint:'Zamisli ono što riječ opisuje. Boje, zvuk, miris. Zatim dolazi sljedeća. Ne moraš ništa raditi kako treba.',
+    worryPh:'Što mi je sada na umu…', worryBtn:'Ostavi za jutro', shelfBtn:'Prikaži odloženo',
+    worryEmpty:'Dovoljno je i samo nekoliko riječi.', worryDone:'Odloženo. Sada ne moraš misliti o tome, pričekat će ovdje do jutra.',
+    darkAria:'Upali zaslon', darkMsg:'Dodirni bilo gdje za povratak',
+    footer:'Ova aplikacija nije medicinsko pomagalo. Ako te nesanica ili tjeskoba dugo muče, posavjetuj se s liječnikom.',
+    lit:'upaljeno: ', popped:'puknuto: ', consts:'zviježđa: ',
+    installed:'Gotovo, ikona je na početnom zaslonu',
+    iosInstall:'U Safariju dodirni Dijeli (kvadratić sa strelicom), a zatim „Dodaj na početni zaslon”.',
+    androidInstall:'U Chromeu dodirni tri točkice ⋮ gore desno i odaberi „Dodaj na početni zaslon” ili „Instaliraj aplikaciju”.',
+    shareText:'Disanje, umirujući zvukovi i jednostavne igre kad san ne dolazi.', copied:'Poveznica je kopirana', copyPrompt:'Kopiraj poveznicu:'
+  },
+  sounds:{ brown:['Smeđi šum','Dubok i mekan, omiljen za koncentraciju'], pink:['Ružičasti šum','Uravnotežen, ugodniji od bijelog'], white:['Bijeli šum','Oštriji, dobro prigušuje okolinu'],
+    rain:['Kiša','Šum kiše iza prozora'], ocean:['More','Spori valovi, oko 7 u minuti'], fan:['Ventilator','Tiho brujanje u pozadini'] },
+  presets:['Za san','Za koncentraciju','Uz more','Kišna noć'],
+  patterns:{
+    box:{ name:'Kvadratno 4·4·4·4', hint:'Četiri jednako duge faze. Daje glavi jednostavan ritam kad misli jure jedna preko druge.', ph:['Udah','Zadrži','Izdah','Zadrži'] },
+    '478':{ name:'Za san 4·7·8', hint:'Dugi izdah pomaže tijelu da uspori. Počni s tri do četiri ciklusa. Ako ti se zavrti u glavi, vrati se normalnom disanju.', ph:['Udah','Zadrži','Izdah'] },
+    coh:{ name:'Ravnomjerno 5,5', hint:'Otprilike pet i pol udaha u minuti, bez zadržavanja. Prikladno za pet do deset minuta, slobodno zatvorenih očiju.', ph:['Udah','Izdah'] },
+    sigh:{ name:'Uzdah', hint:'Dva udaha kroz nos zaredom, a zatim dugi izdah kroz usta. Brzo olakšanje kad je svega previše. Dovoljno je nekoliko ponavljanja.', ph:['Udah','Još malo','Dugi izdah'] }
+  },
+  modes:{
+    flies:['Krijesnice','Nježno dodiruj krijesnice. Ne možeš izgubiti.','Prstom prelazi po površini vode. Svaka krijesnica zazvoni.',''],
+    bubbles:['Mjehurići','Pritišći mjehuriće. Možeš i prelaziti prstom.','Kad puknu svi, dolazi nova folija. Može se pucketati unedogled.','Nova folija'],
+    stars:['Zviježđe','Dodiruj velike zvijezde. Spoje se crtom.','Redoslijed nije važan. Kad spojiš sve, zviježđe zasja i dolazi novo.','Druge zvijezde'],
+    sand:['Zen vrt','Prstom grabljaj po pijesku.','Bez cilja, samo crte u pijesku. Ako želiš početi ispočetka, zagladi pijesak.','Zagladi']
+  },
+  scan:[
+    'Udobno se smjesti i lezi. Ruke neka slobodno leže uz tijelo. Zatvori oči ako želiš.',
+    'Polako udahni kroz nos… i dugo izdahni kroz usta. Još jednom. Nikamo ne žuriš.',
+    'Primijeti stopala. Prste, pete, hrptove stopala. Pusti ih da postanu teška i utonu u krevet.',
+    'Sada listovi. Neka budu mekani i teški. Ne moraš ih držati.',
+    'Koljena i bedra. Sa svakim izdahom još se malo više opuste.',
+    'Bokovi i zdjelica. Pusti da te krevet potpuno nosi.',
+    'Trbuh. Neka se uz dah slobodno diže i spušta. Ne moraš ga uvlačiti.',
+    'Prsa. Dah dolazi i odlazi sam. Ti ga samo promatraš.',
+    'Leđa. Od križa do lopatica. Pusti ih da se razliju po podlozi.',
+    'Ramena. Često u njima nosimo cijeli dan. Pusti ih da se spuste, dalje od ušiju.',
+    'Ruke i laktovi. Podlaktice. Teške i tople.',
+    'Dlanovi i prsti. Neka budu opušteni, malo otvoreni.',
+    'Vrat i zatiljak. Neka glava svom težinom leži na jastuku.',
+    'Čeljust. Neka se zubi ne dodiruju. Jezik neka leži opušteno.',
+    'Obrazi i oči. Kapci su teški. Oko očiju je sve meko.',
+    'Čelo. Neka se izgladi, kao površina vode.',
+    'Cijelo tijelo sada je teško, toplo i mirno. Ne moraš ništa raditi.',
+    'Ostani tako koliko god želiš. San će doći sam kad bude spreman.'
+  ],
+  words:['jabuka','čamac','deka','šuma','svijeća','oblak','mačka','čaj','livada','kamenčić','pero','jezero','kruh','klupko','klupa',
+    'leptir','stablo','šalica','val','mahovina','šišarka','brežuljak','lampa','vrt','bor','med','kapljica','ribnjak',
+    'prozor','gljiva','plaža','povjetarac','košara','polje','suncokret','školjka','zvono','lubenica','snijeg','čipka','jastuk','orah',
+    'mlin','tulipan','zvijezda','staza','kesten','ptičica','jabuka u cvatu','bundeva','izvor','medenjak','lampion','trešnje','svjetionik','čajnik','jedrilica'],
+  greets:[
+    ['Laku noć','Duboka je noć. Ne moraš ništa, tu sam.'],
+    ['Dobro jutro','Novi dan počinje polako.'],
+    ['Lijepo prijepodne','Trenutak za sebe uvijek dobro dođe.'],
+    ['Lijepo poslijepodne','Zastani na nekoliko udaha.'],
+    ['Dobra večer','Dan se bliži kraju.'],
+    ['Laku noć','Polako se pripremi za spavanje.']
+  ],
+  moods:{
+    sleep:{ title:'Ne mogu spavati', desc:'Ležim i ne ide. Glava se ne želi isključiti.', intro:'Ne moraš ništa postići. Dovoljno je ići korak po korak. Slobodno zaspi usput.',
+      steps:[['Pusti tihi šum','Smeđi šum s kišom. Nakon 30 minuta sam polako utihne.'],['Disanje 4·7·8','Tri do četiri polagana ciklusa. Dugi izdah smiruje tijelo.'],
+        ['Opuštanje tijela','Miran glas vodi te od stopala do glave.'],['Miješanje misli','Kad se misli stalno vraćaju, zamišljaj jednostavne riječi.'],['Ugasi zaslon','Mobitel ostaje taman, a zvuk svira dalje.']] },
+    stress:{ title:'Pod stresom sam', desc:'Stegnut želudac, ubrzan dah, brige.', intro:'Prvo tijelo, onda glava. Nekoliko minuta je dovoljno.',
+      steps:[['Dva uzdaha','Dva udaha kroz nos i dugi izdah. Najbrže olakšanje.'],['Kvadratno disanje','Ujednačen ritam 4·4·4·4 nekoliko minuta.'],
+        ['Odloži brige','Zapiši što te muči. Pričekat će ovdje do jutra.'],['More','Spori valovi u pozadini.'],['Zen vrt','Grabljaj po pijesku. Ništa više.']] },
+    over:{ title:'Svega mi je previše', desc:'Buka, ljudi, obaveze. Moram se isključiti.', intro:'Smanjimo podražaje. Manje svjetla, manje zvuka, jedna jednostavna stvar.',
+      steps:[['Nježni smeđi šum','Prekrije buku oko tebe kao deka.'],['Uzdah','Nekoliko ponavljanja i ramena se opuste.'],
+        ['Pucketaj mjehuriće','Jednostavna stvar za ruke, a glava odmara.'],['Pet minuta tame','Ugasi zaslon i samo diši s točkicom.']] },
+    restless:{ title:'Nemirna glava', desc:'Ne mogu se koncentrirati, misli skaču.', intro:'Dajmo glavi nešto malo za što se može uhvatiti.',
+      steps:[['Šum za koncentraciju','Smeđi i ružičasti šum. Mnogima s nemirnom glavom pomaže.'],['Ravnomjerno disanje','Udah i izdah jednako dugo, bez zadržavanja.'],
+        ['Spajaj zvijezde','Mirna igra za nekoliko minuta.'],['Krijesnice','Polagano dodirivanje svjetala na vodi.']] }
+  }
+}
+};
+</script>
+<script>
+/* ---------- HORMONY: překlady ---------- */
+(function(I){
+const H = {
+cs:{
+  nav:'Hormony',
+  hFlashT:'Když přijde nával', hFlashD:'Dvě minuty klidu s představou chladu. Pomůže nával přečkat.',
+  hPelvicT:'Pánevní dno', hPelvicD:'Jednoduché stahování a povolování s počítáním. Pár minut denně.',
+  hMoveT:'Kosti a rovnováha', hMoveD:'8 jednoduchých cviků u židle, asi 10 minut.',
+  hNightT:'Noční pocení', hNightD:'Co dělat, když se v noci probudíš zpocená a nejde znovu usnout.',
+  hint:'Na samotné návaly nejvíc pomáhá léčba od gynekologa, terapie nebo hypnóza. Tady najdeš, jak je snáz přečkat, a cviky pro kosti, svaly a pánevní dno.',
+  care:'Při bolesti kloubů, osteoporóze nebo potížích se srdcem se před cvičením poraď s lékařem.',
+  flashIntro:'Až přijde nával, stiskni Začít. Nemusíš nic dělat, jen poslouchej.',
+  squeeze:'Stáhni', relax:'Povol', pelvicDone:'Hotovo. Hezky.',
+  pelvicHint:'Stáhni svaly, jako bys chtěla zastavit čůrání, a pak je úplně povol. Nezadržuj dech a nestahuj břicho ani hýždě.',
+  levels:['Lehčí','Střední','Delší'],
+  rest:'Odpočinek', next:'Další', prev:'Předchozí', pause:'Pauza', moveDone:'Hotovo. Tělo ti děkuje.',
+  moveIntro:'Postav se k pevné židli, ať se máš čeho chytit. Cvič pomalu a jen tak, aby to nebolelo.',
+  nightPlay:'Pusť chladivý šum', nightCalm:'Zklidnění', nightDark:'Zhasnout obrazovku',
+  flash:[
+    'Zastav se. Nával přijde a zase odejde. Trvá jen chvíli.',
+    'Pomalu vydechni pusou, jako bys foukala do horkého čaje.',
+    'Představ si, že stojíš ve stínu velkého stromu. Vzduch je chladný a svěží.',
+    'U nohou ti teče horská bystřina. Ponoř do ní v duchu ruce. Studená voda ti chladí zápěstí.',
+    'Chlad stoupá od dlaní nahoru do paží, k ramenům a ke krku.',
+    'Na tvář ti dopadá jemný chladný vánek. Jako první sníh.',
+    'Horko slábne. Tělo se samo vrací do klidu. Nemusíš nic dělat.',
+    'Nával odešel. Zůstaň ještě chvíli v tom chladném stínu.'
+  ],
+  ex:[
+    ['Pochod na místě','Zahřátí. Zvedej střídavě kolena a pohybuj rukama.',60],
+    ['Vstávání ze židle','Sedni si na kraj židle a pomalu vstaň bez pomoci rukou. Pak se pomalu posaď.',40],
+    ['Výpony na špičky','Drž se opěradla židle. Zvedni se na špičky a pomalu dolů.',40],
+    ['Stoj na jedné noze','Drž se lehce židle. Půlku času na jedné noze, pak vyměň.',40],
+    ['Kliky o zeď','Opři dlaně o zeď ve výšce ramen. Pomalu pokrč lokty a odtlač se zpět.',40],
+    ['Chůze po čáře','Pata těsně před špičkou, jako po laně. Klidně podél zdi.',40],
+    ['Unožování','Drž se židle a zvedni nataženou nohu do strany. Půlku času každou nohou.',40],
+    ['Protažení','Pomalu se protáhni nahoru, pak do stran. Dýchej klidně.',60]
+  ],
+  tips:[
+    'Odkopni peřinu aspoň z jedné nohy a nech tělo vychladnout.',
+    'Opláchni si zápěstí a krk studenou vodou.',
+    'Měj u postele sklenici vody a náhradní tričko.',
+    'Pomáhá chladnější ložnice a lehčí přikrývky ve vrstvách.',
+    'Než znovu usneš, pusť si tichý šum a pár minut klidně dýchej.'
+  ],
+  mood:{ title:'Návaly a přechod', desc:'Horko, pocení, únava, nespavost.', intro:'Pár věcí, které pomůžou přečkat návaly a posílí tělo.',
+    steps:[['Když přijde nával','Dvě minuty klidu s představou chladu.'],['Noční pocení','Co dělat, když tě to v noci probudí.'],['Pánevní dno','Pár minut denně stačí.'],['Kosti a rovnováha','Deset minut u židle.']] }
+},
+en:{
+  nav:'Hormones',
+  hFlashT:'When a hot flash comes', hFlashD:'Two calm minutes with cooling imagery. Helps you get through it.',
+  hPelvicT:'Pelvic floor', hPelvicD:'Simple squeeze and release with counting. A few minutes a day.',
+  hMoveT:'Bones and balance', hMoveD:'8 simple exercises by a chair, about 10 minutes.',
+  hNightT:'Night sweats', hNightD:'What to do when you wake up sweaty and can’t fall back asleep.',
+  hint:'For hot flashes themselves, treatment from a gynaecologist, therapy or hypnosis helps most. Here you’ll find ways to get through them more easily, plus exercises for your bones, muscles and pelvic floor.',
+  care:'If you have joint pain, osteoporosis or heart problems, talk to your doctor before exercising.',
+  flashIntro:'When a hot flash comes, press Start. You don’t have to do anything, just listen.',
+  squeeze:'Squeeze', relax:'Release', pelvicDone:'Done. Well done.',
+  pelvicHint:'Tighten the muscles as if you wanted to stop the flow of urine, then let them go completely. Don’t hold your breath or tighten your belly or buttocks.',
+  levels:['Easier','Medium','Longer'],
+  rest:'Rest', next:'Next', prev:'Previous', pause:'Pause', moveDone:'Done. Your body thanks you.',
+  moveIntro:'Stand next to a sturdy chair so you have something to hold on to. Move slowly and only as far as it doesn’t hurt.',
+  nightPlay:'Play a cooling sound', nightCalm:'Calm down', nightDark:'Turn off the screen',
+  flash:[
+    'Stop for a moment. The flash comes and goes again. It only lasts a little while.',
+    'Breathe out slowly through your mouth, as if cooling a cup of hot tea.',
+    'Imagine standing in the shade of a big tree. The air is cool and fresh.',
+    'A mountain stream flows at your feet. In your mind, dip your hands in it. The cold water cools your wrists.',
+    'The coolness rises from your palms up your arms, to your shoulders and your neck.',
+    'A gentle cool breeze touches your face. Like the first snow.',
+    'The heat is fading. Your body is returning to calm on its own. You don’t have to do anything.',
+    'The flash has passed. Stay a little longer in that cool shade.'
+  ],
+  ex:[
+    ['Marching on the spot','Warm-up. Lift your knees in turn and swing your arms.',60],
+    ['Sit to stand','Sit on the edge of a chair and slowly stand up without using your hands. Then slowly sit down.',40],
+    ['Heel raises','Hold the back of the chair. Rise onto your toes, then lower slowly.',40],
+    ['Stand on one leg','Hold the chair lightly. Half the time on one leg, then switch.',40],
+    ['Wall push-ups','Put your palms on the wall at shoulder height. Slowly bend your elbows and push back.',40],
+    ['Heel-to-toe walk','Heel just in front of the toes, as if on a tightrope. Walking along a wall is fine.',40],
+    ['Side leg raises','Hold the chair and lift a straight leg to the side. Half the time with each leg.',40],
+    ['Stretch','Slowly stretch up, then to the sides. Breathe calmly.',60]
+  ],
+  tips:[
+    'Kick the duvet off at least one leg and let your body cool down.',
+    'Rinse your wrists and neck with cold water.',
+    'Keep a glass of water and a spare T-shirt by the bed.',
+    'A cooler bedroom and lighter covers in layers help.',
+    'Before going back to sleep, play a quiet noise and breathe calmly for a few minutes.'
+  ],
+  mood:{ title:'Hot flashes & menopause', desc:'Heat, sweating, tiredness, sleeplessness.', intro:'A few things that help you get through hot flashes and strengthen your body.',
+    steps:[['When a hot flash comes','Two calm minutes with cooling imagery.'],['Night sweats','What to do when it wakes you at night.'],['Pelvic floor','A few minutes a day is enough.'],['Bones and balance','Ten minutes by a chair.']] }
+},
+sl:{
+  nav:'Hormoni',
+  hFlashT:'Ko pride vročinski val', hFlashD:'Dve minuti miru s predstavo hladu. Pomaga, da ga lažje prestaneš.',
+  hPelvicT:'Medenično dno', hPelvicD:'Preprosto stiskanje in sproščanje s štetjem. Nekaj minut na dan.',
+  hMoveT:'Kosti in ravnotežje', hMoveD:'8 preprostih vaj ob stolu, približno 10 minut.',
+  hNightT:'Nočno potenje', hNightD:'Kaj narediti, ko se ponoči zbudiš prepotena in ne moreš spet zaspati.',
+  hint:'Pri samih vročinskih valovih najbolj pomagajo zdravljenje pri ginekologu, terapija ali hipnoza. Tukaj najdeš, kako jih lažje prestati, in vaje za kosti, mišice in medenično dno.',
+  care:'Če imaš bolečine v sklepih, osteoporozo ali težave s srcem, se pred vadbo posvetuj z zdravnikom.',
+  flashIntro:'Ko pride val, pritisni Začni. Ničesar ti ni treba narediti, samo poslušaj.',
+  squeeze:'Stisni', relax:'Sprosti', pelvicDone:'Končano. Odlično.',
+  pelvicHint:'Stisni mišice, kot bi želela ustaviti uriniranje, nato jih popolnoma sprosti. Ne zadržuj diha in ne stiskaj trebuha ali zadnjice.',
+  levels:['Lažje','Srednje','Dlje'],
+  rest:'Počitek', next:'Naprej', prev:'Nazaj', pause:'Premor', moveDone:'Končano. Telo se ti zahvaljuje.',
+  moveIntro:'Postavi se k trdnemu stolu, da se imaš česa držati. Vadi počasi in le toliko, da ne boli.',
+  nightPlay:'Prižgi hladilen šum', nightCalm:'Umiritev', nightDark:'Ugasni zaslon',
+  flash:[
+    'Ustavi se. Val pride in spet odide. Traja le kratek čas.',
+    'Počasi izdihni skozi usta, kot bi pihala v vroč čaj.',
+    'Predstavljaj si, da stojiš v senci velikega drevesa. Zrak je hladen in svež.',
+    'Ob tvojih nogah teče gorski potok. V mislih vanj potopi roke. Hladna voda ti hladi zapestja.',
+    'Hlad se dviga od dlani po rokah do ramen in vratu.',
+    'Nežen hladen vetrc ti boža obraz. Kot prvi sneg.',
+    'Vročina pojenja. Telo se samo vrača v mir. Ničesar ti ni treba narediti.',
+    'Val je minil. Ostani še malo v tej hladni senci.'
+  ],
+  ex:[
+    ['Hoja na mestu','Ogrevanje. Izmenično dviguj kolena in premikaj roke.',60],
+    ['Vstajanje s stola','Sedi na rob stola in počasi vstani brez pomoči rok. Nato se počasi usedi.',40],
+    ['Dvigi na prste','Drži se naslonjala stola. Dvigni se na prste in se počasi spusti.',40],
+    ['Stoja na eni nogi','Rahlo se drži stola. Polovico časa na eni nogi, nato zamenjaj.',40],
+    ['Sklece ob steni','Dlani nasloni na steno v višini ramen. Počasi pokrči komolce in se odrini nazaj.',40],
+    ['Hoja po črti','Peta tik pred prsti, kot po vrvi. Lahko ob steni.',40],
+    ['Odnoženje','Drži se stola in iztegnjeno nogo dvigni vstran. Polovico časa z vsako nogo.',40],
+    ['Raztezanje','Počasi se pretegni navzgor, nato vstran. Dihaj mirno.',60]
+  ],
+  tips:[
+    'Odkrij vsaj eno nogo in pusti, da se telo ohladi.',
+    'Zapestja in vrat si splakni s hladno vodo.',
+    'Ob postelji imej kozarec vode in rezervno majico.',
+    'Pomagata hladnejša spalnica in lažje odeje v plasteh.',
+    'Preden spet zaspiš, prižgi tih šum in nekaj minut mirno dihaj.'
+  ],
+  mood:{ title:'Valovi in mena', desc:'Vročina, potenje, utrujenost, nespečnost.', intro:'Nekaj stvari, ki pomagajo prestati vročinske valove in okrepijo telo.',
+    steps:[['Ko pride vročinski val','Dve minuti miru s predstavo hladu.'],['Nočno potenje','Kaj narediti, ko te ponoči zbudi.'],['Medenično dno','Dovolj je nekaj minut na dan.'],['Kosti in ravnotežje','Deset minut ob stolu.']] }
+},
+hr:{
+  nav:'Hormoni',
+  hFlashT:'Kad dođe val vrućine', hFlashD:'Dvije minute mira uz zamišljanje hladnoće. Pomaže da ga lakše izdržiš.',
+  hPelvicT:'Zdjelično dno', hPelvicD:'Jednostavno stezanje i opuštanje uz brojanje. Nekoliko minuta dnevno.',
+  hMoveT:'Kosti i ravnoteža', hMoveD:'8 jednostavnih vježbi uz stolicu, oko 10 minuta.',
+  hNightT:'Noćno znojenje', hNightD:'Što učiniti kad se noću probudiš oznojena i ne možeš ponovno zaspati.',
+  hint:'Kod samih valova vrućine najviše pomažu liječenje kod ginekologa, terapija ili hipnoza. Ovdje ćeš pronaći kako ih lakše izdržati te vježbe za kosti, mišiće i zdjelično dno.',
+  care:'Ako imaš bolove u zglobovima, osteoporozu ili probleme sa srcem, prije vježbanja se posavjetuj s liječnikom.',
+  flashIntro:'Kad dođe val, pritisni Počni. Ne moraš ništa raditi, samo slušaj.',
+  squeeze:'Stegni', relax:'Opusti', pelvicDone:'Gotovo. Bravo.',
+  pelvicHint:'Stegni mišiće kao da želiš zaustaviti mokrenje, a zatim ih potpuno opusti. Ne zadržavaj dah i ne steži trbuh ni stražnjicu.',
+  levels:['Lakše','Srednje','Dulje'],
+  rest:'Odmor', next:'Sljedeća', prev:'Prethodna', pause:'Pauza', moveDone:'Gotovo. Tijelo ti zahvaljuje.',
+  moveIntro:'Stani uz čvrstu stolicu da se imaš za što pridržati. Vježbaj polako i samo toliko da ne boli.',
+  nightPlay:'Pusti rashlađujući šum', nightCalm:'Smirivanje', nightDark:'Ugasi zaslon',
+  flash:[
+    'Zastani. Val dolazi i ponovno odlazi. Traje samo kratko.',
+    'Polako izdahni kroz usta, kao da puhneš u vrući čaj.',
+    'Zamisli da stojiš u hladu velikog stabla. Zrak je hladan i svjež.',
+    'Uz tvoje noge teče planinski potok. U mislima uroni ruke u njega. Hladna voda hladi ti zapešća.',
+    'Hladnoća se penje od dlanova uz ruke, do ramena i vrata.',
+    'Nježan hladan povjetarac miluje ti lice. Kao prvi snijeg.',
+    'Vrućina slabi. Tijelo se samo vraća u mir. Ne moraš ništa raditi.',
+    'Val je prošao. Ostani još malo u toj hladovini.'
+  ],
+  ex:[
+    ['Hodanje u mjestu','Zagrijavanje. Naizmjence podiži koljena i pomiči ruke.',60],
+    ['Ustajanje sa stolice','Sjedni na rub stolice i polako ustani bez pomoći ruku. Zatim polako sjedni.',40],
+    ['Podizanje na prste','Drži se naslona stolice. Podigni se na prste i polako se spusti.',40],
+    ['Stajanje na jednoj nozi','Lagano se drži stolice. Pola vremena na jednoj nozi, zatim zamijeni.',40],
+    ['Sklekovi uz zid','Dlanove nasloni na zid u visini ramena. Polako savij laktove i odgurni se natrag.',40],
+    ['Hodanje po crti','Peta tik ispred prstiju, kao po užetu. Može uz zid.',40],
+    ['Odnoženje','Drži se stolice i ispruženu nogu podigni u stranu. Pola vremena svakom nogom.',40],
+    ['Istezanje','Polako se istegni prema gore, zatim u stranu. Diši mirno.',60]
+  ],
+  tips:[
+    'Otkrij barem jednu nogu i pusti tijelo da se ohladi.',
+    'Isperi zapešća i vrat hladnom vodom.',
+    'Uz krevet drži čašu vode i rezervnu majicu.',
+    'Pomažu hladnija spavaća soba i lakši pokrivači u slojevima.',
+    'Prije nego ponovno zaspiš, pusti tihi šum i nekoliko minuta mirno diši.'
+  ],
+  mood:{ title:'Valovi i menopauza', desc:'Vrućina, znojenje, umor, nesanica.', intro:'Nekoliko stvari koje pomažu izdržati valove vrućine i jačaju tijelo.',
+    steps:[['Kad dođe val vrućine','Dvije minute mira uz zamišljanje hladnoće.'],['Noćno znojenje','Što učiniti kad te noću probudi.'],['Zdjelično dno','Dovoljno je nekoliko minuta dnevno.'],['Kosti i ravnoteža','Deset minuta uz stolicu.']] }
+}
+};
+Object.keys(H).forEach(l => { I[l].horm = H[l]; I[l].ui.nav_horm = H[l].nav; I[l].moods.horm = H[l].mood; });
+})(window.I18N);
+</script>
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('ticho.'+k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('ticho.'+k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* ---------- JAZYK ---------- */
+const LANGS = ['cs', 'en', 'sl', 'hr'];
+const detectLang = () => { const n = (navigator.language || 'cs').slice(0, 2).toLowerCase(); return LANGS.includes(n) ? n : n === 'sk' ? 'cs' : n === 'bs' || n === 'sr' ? 'hr' : 'en'; };
+const lang = LANGS.includes(store.get('lang')) ? store.get('lang') : detectLang();
+const L = window.I18N[lang];
+const T = k => L.ui[k] ?? window.I18N.cs.ui[k] ?? k;
+document.documentElement.lang = lang;
+document.title = T('brand') + ' – ' + T('tagline');
+document.querySelector('meta[name=description]').content = T('desc');
+(function applyStatic(){
+  const set = (sel, k, prop = 'textContent') => document.querySelectorAll(sel).forEach(el => el[prop] = T(k));
+  const lbl = (sel, k) => { const i = $(sel); i.parentNode.lastChild.textContent = ' ' + T(k); };
+  $('.brand > div').innerHTML = `${T('brand')}<small>${T('tagline')}</small>`;
+  set('#mute span.on', 'muteOn'); set('#mute span.off', 'muteOff'); set('#mute', 'muteTitle', 'title');
+  set('.tm .vh', 'timerLabel'); set('#sleepTimer option[value="0"]', 'timerOff');
+  set('#langLbl', 'lang'); set('#lang', 'lang', 'title');
+  set('#aa', 'large', 'title'); set('#share', 'share', 'title'); set('#share', 'share', 'ariaLabel');
+  ['home','breath','sounds','game','sleep','horm'].forEach(k => set(`nav button[data-tab="${k}"]`, 'nav_' + k));
+  $('.sub').innerHTML = `<span id="helloLine"></span> ${T('howFeel')}`;
+  set('#install b', 'installT'); set('#install span', 'installD'); set('#installBtn', 'installBtn'); set('#planBack', 'planBack');
+  set('#phase', 'ready'); set('#breathBtn', 'start'); set('#scanBtn', 'start'); set('#shuffleBtn', 'start');
+  lbl('#chime', 'chime'); lbl('#vibe', 'vibe'); lbl('#speak', 'speak');
+  set('#silence', 'silence'); set('#sounds .hint', 'soundsHint');
+  [['[data-open="scan"]','scan'],['[data-open="shuffle"]','shuffle'],['[data-open="worry"]','worry'],['#goDark','dark']].forEach(([sel, k]) => { set(sel + ' b', k + 'T'); set(sel + ' span', k + 'D'); });
+  set('#sleepHint', 'sleepHint'); set('#scanText', 'scanIntro'); set('[data-close]', 'back');
+  set('#p-shuffle .hint', 'shuffleHint'); set('#worryText', 'worryPh', 'placeholder');
+  set('#worryBtn', 'worryBtn'); set('#shelfBtn', 'shelfBtn'); set('#dark', 'darkAria', 'ariaLabel'); set('#darkMsg', 'darkMsg');
+  set('footer', 'footer');
+  $('#lang').value = lang;
+})();
+$('#lang').addEventListener('change', e => { store.set('lang', e.target.value); location.reload(); });
+
+/* ---------- AUDIO ---------- */
+let ctx = null, master = null, muteNode = null, muted = store.get('muted', false);
+const buffers = {};
+function ensureAudio(){
+  if(!ctx){
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 1;
+    muteNode = ctx.createGain();
+    muteNode.gain.value = muted ? 0 : 1;
+    master.connect(muteNode).connect(ctx.destination);
+  }
+  if(ctx.state === 'suspended') ctx.resume();
+  return ctx;
+}
+function getBuffer(type){
+  if(buffers[type]) return buffers[type];
+  const sr = ctx.sampleRate, len = Math.floor(sr * 8), fade = 4096;
+  const buf = ctx.createBuffer(2, len, sr);
+  for(let ch = 0; ch < 2; ch++){
+    const d = buf.getChannelData(ch);
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0,last=0;
+    for(let i = 0; i < len; i++){
+      const w = Math.random()*2 - 1;
+      if(type === 'white') d[i] = w;
+      else if(type === 'pink'){
+        b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759; b2=0.96900*b2+w*0.1538520;
+        b3=0.86650*b3+w*0.3104856; b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
+        d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11; b6=w*0.115926;
+      } else { last=(last+0.02*w)/1.02; d[i]=last*3.5; }
+    }
+    // plynulá smyčka bez cvaknutí
+    for(let i = 0; i < fade; i++){
+      const k = i / fade;
+      d[i] = d[i]*k + d[len-fade+i]*(1-k);
+    }
+  }
+  buffers[type] = { buf, loopEnd: (len - fade) / sr };
+  return buffers[type];
+}
+function tone(freq, dur = 2, vol = .07, type = 'sine'){
+  ensureAudio();
+  if(muted) return;
+  const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime;
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol, t + .05);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g).connect(master);
+  o.start(t); o.stop(t + dur + .1);
+}
+function filt(type, f, q){ const n = ctx.createBiquadFilter(); n.type = type; n.frequency.value = f; if(q) n.Q.value = q; return n; }
+
+const SOUNDS = [
+  { id:'brown', name:'Hnědý šum', desc:'Hluboký a měkký, oblíbený na soustředění', buf:'brown', gain:.75 },
+  { id:'pink',  name:'Růžový šum', desc:'Vyvážený, příjemnější než bílý', buf:'pink', gain:.55 },
+  { id:'white', name:'Bílý šum', desc:'Ostřejší, dobře přehluší okolí', buf:'white', gain:.16,
+    chain:(src,out)=>{ src.connect(filt('lowpass',8000)).connect(out); return []; } },
+  { id:'rain',  name:'Déšť', desc:'Šumění deště za oknem', buf:'pink', gain:.7,
+    chain:(src,out)=>{ src.connect(filt('highpass',450)).connect(filt('lowpass',5500)).connect(out); return []; } },
+  { id:'ocean', name:'Moře', desc:'Pomalé vlny, asi 7 za minutu', buf:'brown', gain:1,
+    chain:(src,out)=>{
+      const lp = filt('lowpass',700), wave = ctx.createGain(); wave.gain.value = .5;
+      const lfo = ctx.createOscillator(), depth = ctx.createGain();
+      lfo.frequency.value = .11; depth.gain.value = .45;
+      lfo.connect(depth).connect(wave.gain); lfo.start();
+      src.connect(lp).connect(wave).connect(out); return [lfo];
+    } },
+  { id:'fan',   name:'Ventilátor', desc:'Tiché hučení v pozadí', buf:'brown', gain:1.3,
+    chain:(src,out)=>{ src.connect(filt('lowpass',260)).connect(filt('peaking',110,1.2)).connect(out); return []; } },
+];
+SOUNDS.forEach(s => { const tr = L.sounds[s.id]; if(tr) [s.name, s.desc] = tr; });
+const running = {}; // id -> {src, vol, extra}
+const levels = {};  // id -> 0..100
+
+function startSound(s){
+  ensureAudio();
+  const { buf, loopEnd } = getBuffer(s.buf);
+  const src = ctx.createBufferSource();
+  src.buffer = buf; src.loop = true; src.loopStart = 0; src.loopEnd = loopEnd;
+  const vol = ctx.createGain(); vol.gain.value = 0;
+  const extra = s.chain ? s.chain(src, vol) : (src.connect(vol), []);
+  vol.connect(master);
+  src.start(0, Math.random() * loopEnd);
+  running[s.id] = { src, vol, extra };
+}
+function stopSound(id){
+  const r = running[id]; if(!r) return;
+  delete running[id];
+  const t = ctx.currentTime;
+  r.vol.gain.cancelScheduledValues(t);
+  r.vol.gain.setTargetAtTime(0, t, .15);
+  setTimeout(() => { try{ r.src.stop(); r.extra.forEach(n => n.stop()); r.vol.disconnect(); }catch(e){} }, 1200);
+}
+function setLevel(id, v){
+  levels[id] = v;
+  const s = SOUNDS.find(x => x.id === id);
+  const card = document.getElementById('card-' + id);
+  if(card){ card.classList.toggle('on', v > 0); card.querySelector('h3 span').textContent = v ? v + ' %' : ''; card.querySelector('input').value = v; }
+  if(v <= 0){ stopSound(id); return; }
+  if(!running[id]) startSound(s);
+  const g = Math.pow(v / 100, 2) * s.gain;
+  running[id].vol.gain.setTargetAtTime(g, ctx.currentTime, .25);
+}
+
+// UI zvuků
+const grid = $('#soundGrid');
+SOUNDS.forEach(s => {
+  levels[s.id] = 0;
+  const c = document.createElement('div');
+  c.className = 'card'; c.id = 'card-' + s.id;
+  c.innerHTML = `<h3>${s.name}<span></span></h3><p>${s.desc}</p>
+    <input type="range" min="0" max="100" value="0" aria-label="${T('volume')}: ${s.name}">`;
+  c.querySelector('input').addEventListener('input', e => setLevel(s.id, +e.target.value));
+  grid.appendChild(c);
+});
+const PRESETS = [
+  { name:'Na spánek',      mix:{ brown:55, rain:35 } },
+  { name:'Na soustředění', mix:{ brown:60, pink:20 } },
+  { name:'U moře',         mix:{ ocean:70, brown:15 } },
+  { name:'Deštivá noc',    mix:{ rain:60, fan:30 } },
+];
+PRESETS.forEach((p, i) => { if(L.presets[i]) p.name = L.presets[i]; });
+PRESETS.forEach(p => {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.textContent = p.name;
+  b.addEventListener('click', () => SOUNDS.forEach(s => setLevel(s.id, p.mix[s.id] || 0)));
+  $('#presets').appendChild(b);
+});
+$('#silence').addEventListener('click', () => SOUNDS.forEach(s => setLevel(s.id, 0)));
+
+/* ---------- DÝCHÁNÍ ---------- */
+const PATTERNS = [
+  { id:'box', name:'Krabicové 4·4·4·4',
+    hint:'Čtyři stejně dlouhé fáze. Dává hlavě jednoduchý rytmus, když myšlenky běží jedna přes druhou.',
+    phases:[{t:'Nádech',s:4,to:1},{t:'Zadrž',s:4,to:1},{t:'Výdech',s:4,to:.45},{t:'Zadrž',s:4,to:.45}] },
+  { id:'478', name:'Na usnutí 4·7·8',
+    hint:'Dlouhý výdech pomáhá tělu zpomalit. Začni třemi až čtyřmi cykly. Pokud se ti zatočí hlava, vrať se k běžnému dechu.',
+    phases:[{t:'Nádech',s:4,to:1},{t:'Zadrž',s:7,to:1},{t:'Výdech',s:8,to:.45}] },
+  { id:'coh', name:'Rovnoměrné 5,5',
+    hint:'Asi pět a půl dechu za minutu, bez zadržování. Hodí se na pět až deset minut, klidně se zavřenýma očima.',
+    phases:[{t:'Nádech',s:5.5,to:1},{t:'Výdech',s:5.5,to:.45}] },
+  { id:'sigh', name:'Povzdech',
+    hint:'Dva nádechy nosem za sebou a pak dlouhý výdech pusou. Rychlé uvolnění, když je toho moc. Stačí pár opakování.',
+    phases:[{t:'Nádech',s:2.2,to:.85},{t:'Ještě trochu',s:1.2,to:1},{t:'Dlouhý výdech',s:6,to:.45}] },
+];
+PATTERNS.forEach(p => {
+  p.phases.forEach(ph => ph.k = /^Nádech|Ještě/.test(ph.t) ? 'in' : /ýdech/.test(ph.t) ? 'out' : 'hold');
+  const tr = L.patterns[p.id];
+  if(tr){ p.name = tr.name; p.hint = tr.hint; p.phases.forEach((ph, i) => ph.t = tr.ph[i] || ph.t); }
+});
+let pat = PATTERNS.find(p => p.id === store.get('pattern', 'box')) || PATTERNS[0];
+let breathing = false, bIdx = 0, bStart = 0, bFrom = .45, cycles = 0, bRaf = 0;
+const orb = $('#orb'), phaseEl = $('#phase'), countEl = $('#count');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+PATTERNS.forEach(p => {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.textContent = p.name; b.setAttribute('role','radio');
+  b.dataset.id = p.id;
+  b.addEventListener('click', () => { pat = p; store.set('pattern', p.id); renderPatterns(); if(breathing){ stopBreath(); startBreath(); } });
+  $('#patterns').appendChild(b);
+});
+function renderPatterns(){
+  document.querySelectorAll('#patterns .chip').forEach(b => b.setAttribute('aria-checked', b.dataset.id === pat.id));
+  $('#patternHint').textContent = pat.hint;
+}
+renderPatterns();
+$('#chime').checked = store.get('chime', true);
+$('#vibe').checked = store.get('vibe', false);
+$('#chime').addEventListener('change', e => store.set('chime', e.target.checked));
+$('#vibe').addEventListener('change', e => store.set('vibe', e.target.checked));
+
+function cue(ph){
+  phaseEl.textContent = ph.t;
+  if($('#chime').checked){
+    const f = ph.k === 'in' ? 396 : ph.k === 'out' ? 264 : 330;
+    tone(f, 1.8, .05);
+  }
+  if($('#vibe').checked && navigator.vibrate) navigator.vibrate(25);
+}
+function setScale(s){ orb.style.transform = `scale(${s})`; }
+function startBreath(){
+  ensureAudio();
+  breathing = true; bIdx = 0; bFrom = .45; cycles = 0; bStart = performance.now();
+  $('#breathBtn').textContent = T('stop');
+  $('#cycles').textContent = '';
+  cue(pat.phases[0]);
+  bRaf = requestAnimationFrame(breathFrame);
+}
+function stopBreath(){
+  breathing = false; cancelAnimationFrame(bRaf);
+  $('#breathBtn').textContent = T('start');
+  phaseEl.textContent = T('ready'); countEl.textContent = '';
+  orb.style.transition = 'transform 1.5s ease'; setScale(.45);
+  setTimeout(() => orb.style.transition = '', 1600);
+}
+function breathFrame(now){
+  if(!breathing) return;
+  let ph = pat.phases[bIdx];
+  let el = (now - bStart) / 1000;
+  if(el >= ph.s){
+    bFrom = ph.to; bIdx = (bIdx + 1) % pat.phases.length; bStart = now; el = 0;
+    if(bIdx === 0){ cycles++; $('#cycles').textContent = L.cycles(cycles); }
+    ph = pat.phases[bIdx]; cue(ph);
+  }
+  const t = Math.min(el / ph.s, 1);
+  const e = reduce ? t : .5 - .5 * Math.cos(Math.PI * t);
+  setScale(bFrom + (ph.to - bFrom) * e);
+  countEl.textContent = Math.ceil(ph.s - el);
+  bRaf = requestAnimationFrame(breathFrame);
+}
+$('#breathBtn').addEventListener('click', () => breathing ? stopBreath() : startBreath());
+
+/* ---------- ZÁLOŽKY ---------- */
+let tab = 'home';
+function goTab(id){
+  tab = id;
+  document.querySelectorAll('nav button').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === id));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('active', s.id === id));
+  if(id === 'game') startGame(); else stopGame();
+  if(id !== 'horm') stopHorm();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => goTab(b.dataset.tab)));
+
+// jednoduché vypnutí zvuku
+function setMuted(on){
+  muted = on; store.set('muted', on);
+  $('#mute').setAttribute('aria-pressed', on);
+  if(muteNode) muteNode.gain.setTargetAtTime(on ? 0 : 1, ctx.currentTime, .08);
+  if(on && 'speechSynthesis' in window) speechSynthesis.cancel();
+}
+setMuted(muted);
+$('#mute').addEventListener('click', () => { ensureAudio(); setMuted(!muted); });
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') darkOff();
+  if(e.code === 'Space' && tab === 'breath' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT'){
+    e.preventDefault(); breathing ? stopBreath() : startBreath();
+  }
+});
+
+/* ---------- HRY ---------- */
+const cv = $('#cv'), g = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1, gRaf = 0, gameOn = false, down = false, infoT = 0;
+const SCALE = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33, 659.25, 783.99];
+const rnd = (a, b) => a + Math.random() * (b - a);
+const count = t => $('#gamecount').textContent = t;
+function hzForY(y){ return SCALE[Math.max(0, Math.min(SCALE.length - 1, Math.floor((1 - y / H) * SCALE.length)))]; }
+
+function pop(){
+  ensureAudio();
+  const t = ctx.currentTime, src = ctx.createBufferSource(), gn = ctx.createGain();
+  src.buffer = getBuffer('white').buf;
+  gn.gain.setValueAtTime(0, t);
+  gn.gain.linearRampToValueAtTime(.35, t + .003);
+  gn.gain.exponentialRampToValueAtTime(.001, t + .08);
+  src.connect(filt('bandpass', rnd(900, 1700), 2.5)).connect(gn).connect(master);
+  src.start(t, Math.random() * 5); src.stop(t + .1);
+  tone(rnd(130, 170), .18, .06);
+  if(navigator.vibrate) navigator.vibrate(12);
+}
+
+/* Světlušky */
+const flies = { info:'Pomalu se dotýkej světlušek. Nic se nedá prohrát.',
+  hint:'Táhni prstem po hladině. Každá světluška zazní tónem.', actLabel:'',
+  list:[], ripples:[], lit:0, lastRip:0,
+  init(){ if(!this.list.length) for(let i = 0; i < 22; i++) this.list.push(this.make()); if(this.lit) count(T('lit') + this.lit); },
+  make(){ return { x:rnd(0,W), y:rnd(0,H), a:rnd(0,6.28), sp:rnd(.12,.34), glow:0, ph:rnd(0,6.28), hue:rnd(38,78), cool:0 }; },
+  down(x, y){ this.move(x, y); },
+  move(x, y){
+    const now = performance.now();
+    if(now - this.lastRip > 120){ this.ripples.push({ x, y, r:4, life:1 }); this.lastRip = now; }
+    for(const f of this.list){
+      const dx = f.x - x, dy = f.y - y;
+      if(dx*dx + dy*dy < 55*55 && f.cool <= 0){
+        f.glow = 1; f.cool = 90; f.a = Math.atan2(dy, dx);
+        tone(hzForY(f.y), 3, .045, 'triangle');
+        count(T('lit') + (++this.lit));
+      }
+    }
+  },
+  frame(t){
+    g.clearRect(0, 0, W, H);
+    for(let i = this.ripples.length - 1; i >= 0; i--){
+      const r = this.ripples[i]; r.r += 1.1; r.life -= .007;
+      if(r.life <= 0){ this.ripples.splice(i, 1); continue; }
+      g.strokeStyle = `rgba(255,206,178,${r.life * .35})`; g.lineWidth = 1.2;
+      g.beginPath(); g.arc(r.x, r.y, r.r, 0, Math.PI*2); g.stroke();
+    }
+    g.globalCompositeOperation = 'lighter';
+    for(const f of this.list){
+      f.a += (Math.random() - .5) * .08;
+      const sp = f.sp * (1 + f.glow * 2);
+      f.x += Math.cos(f.a) * sp; f.y += Math.sin(f.a) * sp;
+      if(f.x < -20) f.x = W + 20; if(f.x > W + 20) f.x = -20;
+      if(f.y < -20) f.y = H + 20; if(f.y > H + 20) f.y = -20;
+      f.glow *= .985; if(f.cool > 0) f.cool--;
+      const fl = .35 + .25 * Math.sin(t * .0015 + f.ph), a = Math.min(1, fl + f.glow * .7), rad = 6 + f.glow * 26 + fl * 6;
+      const gr = g.createRadialGradient(f.x, f.y, 0, f.x, f.y, rad);
+      gr.addColorStop(0, `hsla(${f.hue},100%,80%,${a})`);
+      gr.addColorStop(.3, `hsla(${f.hue},100%,60%,${a * .4})`);
+      gr.addColorStop(1, `hsla(${f.hue},100%,50%,0)`);
+      g.fillStyle = gr; g.beginPath(); g.arc(f.x, f.y, rad, 0, Math.PI*2); g.fill();
+    }
+    g.globalCompositeOperation = 'source-over';
+  }
+};
+
+/* Bublinková fólie */
+const bubbles = { info:'Mačkej bubliny. Můžeš i přejíždět prstem.',
+  hint:'Když prasknou všechny, přijde nová fólie. Mačkat se dá donekonečna.', actLabel:'Nová fólie',
+  list:[], popped:0, total:0, refill:0,
+  init(){
+    this.list = []; clearTimeout(this.refill);
+    const cell = Math.max(52, Math.min(72, W / 7)), r = cell * .4, rowH = cell * .87;
+    const cols = Math.floor((W - cell / 2) / cell), rows = Math.floor(H / rowH);
+    const ox = (W - ((cols - 1) * cell + cell / 2)) / 2, oy = (H - (rows - 1) * rowH) / 2;
+    for(let j = 0; j < rows; j++) for(let i = 0; i < cols; i++)
+      this.list.push({ x: ox + i * cell + (j % 2 ? cell / 2 : 0), y: oy + j * rowH, r, popped:false, k:0, born: performance.now() + (i + j) * 25, rot: rnd(0, 6) });
+    if(this.total) count(T('popped') + this.total);
+  },
+  hit(x, y){
+    for(const b of this.list){
+      if(!b.popped && (b.x - x) ** 2 + (b.y - y) ** 2 < b.r * b.r){
+        b.popped = true; b.k = 1; pop(); count(T('popped') + (++this.total));
+        if(this.list.every(q => q.popped)) this.refill = setTimeout(() => this.init(), 1800);
+        return;
+      }
+    }
+  },
+  down(x, y){ this.hit(x, y); }, move(x, y){ this.hit(x, y); },
+  frame(t){
+    g.clearRect(0, 0, W, H);
+    for(const b of this.list){
+      const age = Math.min(1, Math.max(0, (t - b.born) / 500));
+      if(age <= 0) continue;
+      g.save(); g.globalAlpha = age; g.translate(b.x, b.y);
+      if(!b.popped){
+        const gr = g.createRadialGradient(-b.r*.35, -b.r*.4, b.r*.05, 0, 0, b.r);
+        gr.addColorStop(0, 'rgba(255,255,255,.55)'); gr.addColorStop(.25, 'rgba(255,218,196,.18)');
+        gr.addColorStop(1, 'rgba(240,181,138,.07)');
+        g.fillStyle = gr; g.beginPath(); g.arc(0, 0, b.r, 0, Math.PI*2); g.fill();
+        g.strokeStyle = 'rgba(255,218,196,.25)'; g.lineWidth = 1; g.stroke();
+      } else {
+        if(b.k > 0){ b.k -= .06; g.strokeStyle = `rgba(200,215,255,${b.k * .5})`; g.lineWidth = 1.5; g.beginPath(); g.arc(0, 0, b.r * (1.6 - b.k * .6), 0, Math.PI*2); g.stroke(); }
+        g.rotate(b.rot); g.fillStyle = 'rgba(240,181,138,.05)'; g.strokeStyle = 'rgba(255,218,196,.12)';
+        g.beginPath();
+        for(let i = 0; i < 9; i++){ const a = i / 9 * Math.PI*2, rr = b.r * (i % 2 ? .78 : .92); g.lineTo(Math.cos(a)*rr, Math.sin(a)*rr*.85); }
+        g.closePath(); g.fill(); g.stroke();
+      }
+      g.restore();
+    }
+  },
+  act(){ this.init(); }
+};
+
+/* Souhvězdí */
+const stars = { info:'Klepej na velké hvězdy. Spojí se čárou.',
+  hint:'Pořadí je jedno. Když spojíš všechny, souhvězdí se rozzáří a přijde nové.', actLabel:'Jiné hvězdy',
+  pts:[], order:[], dust:[], done:0, fade:1, doneAt:0, made:0, nextT:0,
+  init(){
+    clearTimeout(this.nextT);
+    if(!this.dust.length || this.dW !== W) { this.dW = W; this.dust = Array.from({ length: 110 }, () => ({ x:rnd(0,W), y:rnd(0,H), r:rnd(.3,1.2), ph:rnd(0,6.28) })); }
+    const n = Math.floor(rnd(5, 9)), m = 50, pts = [];
+    let tries = 0;
+    while(pts.length < n && tries++ < 500){
+      const p = { x: rnd(m, W - m), y: rnd(m + 20, H - m), ph: rnd(0, 6.28) };
+      if(pts.every(q => (q.x - p.x) ** 2 + (q.y - p.y) ** 2 > 90 * 90)) pts.push(p);
+    }
+    this.pts = pts; this.order = []; this.done = 0; this.fade = 0; this.lineT = 0;
+    if(this.made) count(T('consts') + this.made);
+  },
+  down(x, y){
+    if(this.done) return;
+    let best = -1, bd = 40 * 40;
+    this.pts.forEach((p, i) => { const d = (p.x - x) ** 2 + (p.y - y) ** 2; if(d < bd && !this.order.includes(i)){ bd = d; best = i; } });
+    if(best < 0) return;
+    this.order.push(best); this.lineT = performance.now();
+    tone(SCALE[Math.min(SCALE.length - 1, this.order.length - 1)], 2.5, .05, 'sine');
+    if(this.order.length === this.pts.length){
+      this.done = performance.now();
+      setTimeout(() => { [0, 2, 4].forEach((k, i) => setTimeout(() => tone(SCALE[k] / 2, 4, .04), i * 120)); }, 300);
+      count(T('consts') + (++this.made));
+      this.nextT = setTimeout(() => this.init(), 5000);
+    }
+  },
+  move(){},
+  frame(t){
+    g.clearRect(0, 0, W, H);
+    this.fade = Math.min(1, this.fade + .02);
+    let out = 1;
+    if(this.done){ const e = (t - this.done) / 1000; out = e > 3.5 ? Math.max(0, 1 - (e - 3.5) / 1.3) : 1; }
+    for(const d of this.dust){ g.fillStyle = `rgba(200,210,255,${.15 + .15 * Math.sin(t * .001 + d.ph)})`; g.beginPath(); g.arc(d.x, d.y, d.r, 0, Math.PI*2); g.fill(); }
+    const glow = this.done ? Math.min(1, (t - this.done) / 800) : 0;
+    g.lineCap = 'round';
+    for(let i = 1; i < this.order.length; i++){
+      const a = this.pts[this.order[i-1]], b = this.pts[this.order[i]];
+      const k = i === this.order.length - 1 ? Math.min(1, (t - this.lineT) / 450) : 1;
+      g.strokeStyle = `rgba(200,215,255,${(.35 + glow * .4) * out})`; g.lineWidth = 1.5 + glow * 1.5;
+      g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k); g.stroke();
+    }
+    g.globalCompositeOperation = 'lighter';
+    this.pts.forEach((p, i) => {
+      const on = this.order.includes(i), pulse = .5 + .5 * Math.sin(t * .002 + p.ph);
+      const rad = (on ? 16 : 11 + pulse * 4) + glow * 10, al = (on ? .95 : .45 + pulse * .25) * this.fade * out;
+      const gr = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, rad);
+      gr.addColorStop(0, `rgba(255,250,235,${al})`); gr.addColorStop(.25, `rgba(210,220,255,${al * .5})`); gr.addColorStop(1, 'rgba(150,170,255,0)');
+      g.fillStyle = gr; g.beginPath(); g.arc(p.x, p.y, rad, 0, Math.PI*2); g.fill();
+    });
+    g.globalCompositeOperation = 'source-over';
+  },
+  act(){ this.init(); }
+};
+
+/* Zen zahrádka */
+const sand = { info:'Táhni prstem a hrab do písku.',
+  hint:'Žádný cíl, jen čáry v písku. Když chceš začít znovu, písek uhlaď.', actLabel:'Uhladit',
+  base:null, layer:null, last:null, smooth:0, noise:null, stones:[],
+  init(){
+    const mk = () => { const c = document.createElement('canvas'); c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); const x = c.getContext('2d'); x.setTransform(DPR, 0, 0, DPR, 0, 0); return [c, x]; };
+    const [bc, bx] = mk();
+    bx.fillStyle = '#4a4336'; bx.fillRect(0, 0, W, H);
+    for(let i = 0; i < W * H / 9; i++){ bx.fillStyle = Math.random() < .5 ? 'rgba(255,240,210,.05)' : 'rgba(0,0,0,.07)'; bx.fillRect(rnd(0,W), rnd(0,H), 1, 1); }
+    this.base = bc;
+    const [lc, lx] = mk(); lx.drawImage(bc, 0, 0, W, H);
+    this.layer = lc; this.lx = lx;
+    this.stones = [{ x:W*.72, y:H*.3, rx:34, ry:26 }, { x:W*.25, y:H*.68, rx:26, ry:20 }, { x:W*.33, y:H*.72, rx:14, ry:11 }];
+    this.startNoise();
+  },
+  startNoise(){
+    if(this.noise || !ctx) return;
+    const src = ctx.createBufferSource(), gn = ctx.createGain();
+    src.buffer = getBuffer('pink').buf; src.loop = true; src.loopEnd = getBuffer('pink').loopEnd;
+    gn.gain.value = 0;
+    src.connect(filt('bandpass', 2200, .8)).connect(gn).connect(master); src.start();
+    this.noise = { src, gn };
+  },
+  stopNoise(){ if(this.noise){ const n = this.noise; this.noise = null; n.gn.gain.setTargetAtTime(0, ctx.currentTime, .05); setTimeout(() => { try{ n.src.stop(); }catch(e){} }, 400); } },
+  down(x, y){ this.startNoise(); this.last = { x, y }; },
+  move(x, y){
+    const l = this.last; if(!l) return;
+    const dx = x - l.x, dy = y - l.y, d = Math.hypot(dx, dy);
+    if(d < 2) return;
+    const nx = -dy / d, ny = dx / d, c = this.lx;
+    c.lineCap = 'round';
+    for(let k = -2; k <= 2; k++){
+      const o = k * 7;
+      c.strokeStyle = 'rgba(20,16,10,.28)'; c.lineWidth = 3;
+      c.beginPath(); c.moveTo(l.x + nx*o, l.y + ny*o); c.lineTo(x + nx*o, y + ny*o); c.stroke();
+      c.strokeStyle = 'rgba(255,235,200,.10)'; c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(l.x + nx*o + 1.5, l.y + ny*o + 1.5); c.lineTo(x + nx*o + 1.5, y + ny*o + 1.5); c.stroke();
+    }
+    if(this.noise) this.noise.gn.gain.setTargetAtTime(Math.min(.25, d / 60), ctx.currentTime, .03);
+    this.last = { x, y };
+  },
+  up(){ this.last = null; if(this.noise) this.noise.gn.gain.setTargetAtTime(0, ctx.currentTime, .1); },
+  frame(){
+    if(!this.layer) return;
+    if(this.smooth > 0){ this.lx.globalAlpha = .07; this.lx.drawImage(this.base, 0, 0, W, H); this.lx.globalAlpha = 1; this.smooth--; }
+    g.drawImage(this.layer, 0, 0, W, H);
+    for(const s of this.stones){
+      g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(s.x + 4, s.y + 5, s.rx, s.ry, 0, 0, Math.PI*2); g.fill();
+      const gr = g.createRadialGradient(s.x - s.rx*.3, s.y - s.ry*.4, 2, s.x, s.y, s.rx);
+      gr.addColorStop(0, '#77736c'); gr.addColorStop(1, '#3b3935');
+      g.fillStyle = gr; g.beginPath(); g.ellipse(s.x, s.y, s.rx, s.ry, 0, 0, Math.PI*2); g.fill();
+    }
+  },
+  act(){ this.smooth = 45; },
+  leave(){ this.stopNoise(); }
+};
+
+const MODES = { flies:{ name:'Světlušky', m:flies }, bubbles:{ name:'Bublinky', m:bubbles }, stars:{ name:'Souhvězdí', m:stars }, sand:{ name:'Zen zahrádka', m:sand } };
+Object.entries(MODES).forEach(([id, o]) => { const tr = L.modes[id]; if(tr){ o.name = tr[0]; o.m.info = tr[1]; o.m.hint = tr[2]; o.m.actLabel = tr[3]; } });
+let mode = MODES[store.get('mode', 'bubbles')] ? store.get('mode', 'bubbles') : 'bubbles';
+const M = () => MODES[mode].m;
+Object.entries(MODES).forEach(([id, o]) => {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.textContent = o.name; b.dataset.id = id; b.setAttribute('role', 'radio');
+  b.addEventListener('click', () => setMode(id));
+  $('#modes').appendChild(b);
+});
+function info(text){
+  const el = $('#gameinfo'); el.textContent = text; el.style.opacity = 1;
+  clearTimeout(infoT); infoT = setTimeout(() => el.style.opacity = 0, 5000);
+}
+function setMode(id){
+  if(M().leave) M().leave();
+  mode = id; store.set('mode', id);
+  document.querySelectorAll('#modes .chip').forEach(b => b.setAttribute('aria-checked', b.dataset.id === id));
+  const m = M();
+  count(''); $('#gameHint').textContent = m.hint;
+  $('#gameAct').textContent = m.actLabel; $('#gameAct').style.display = m.actLabel ? '' : 'none';
+  if(gameOn){ m.init(); info(m.info); }
+}
+$('#gameAct').addEventListener('click', () => { ensureAudio(); if(typeof M().act === 'function') M().act(); });
+setMode(mode);
+
+function resize(){
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  const changed = Math.abs(r.width - W) > 1 || Math.abs(r.height - H) > 1;
+  W = r.width; H = r.height;
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  return changed;
+}
+function frame(t){ if(!gameOn) return; M().frame(t); gRaf = requestAnimationFrame(frame); }
+function startGame(){
+  if(gameOn) return;
+  gameOn = true; resize();
+  M().init(); info(M().info);
+  gRaf = requestAnimationFrame(frame);
+}
+function stopGame(){ if(!gameOn) return; gameOn = false; cancelAnimationFrame(gRaf); if(M().leave) M().leave(); }
+let rzT = 0;
+window.addEventListener('resize', () => { if(!gameOn) return; clearTimeout(rzT); rzT = setTimeout(() => { if(resize() && mode !== 'flies') M().init(); }, 200); });
+
+function pos(e){ const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+cv.addEventListener('pointerdown', e => { ensureAudio(); down = true; try{ cv.setPointerCapture(e.pointerId); }catch(_){} $('#gameinfo').style.opacity = 0; M().down(...pos(e)); });
+cv.addEventListener('pointermove', e => { if(down) M().move(...pos(e)); });
+const up = () => { down = false; if(M().up) M().up(); };
+cv.addEventListener('pointerup', up);
+cv.addEventListener('pointercancel', up);
+
+/* ---------- USÍNÁNÍ ---------- */
+// větší písmo
+const setLarge = on => { document.body.classList.toggle('large', on); $('#aa').setAttribute('aria-pressed', on); store.set('large', on); };
+setLarge(store.get('large', false));
+$('#aa').addEventListener('click', () => setLarge(!document.body.classList.contains('large')));
+
+// panely
+function openPanel(id){
+  $('#sleepMenu').style.display = 'none'; $('#sleepHint').style.display = 'none';
+  document.querySelectorAll('#sleep .panel').forEach(p => p.classList.toggle('open', p.id === 'p-' + id));
+}
+function closePanels(){
+  stopScan(); stopShuffle();
+  document.querySelectorAll('#sleep .panel').forEach(p => p.classList.remove('open'));
+  $('#sleepMenu').style.display = ''; $('#sleepHint').style.display = '';
+}
+document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openPanel(b.dataset.open)));
+document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closePanels));
+
+// hlas
+let csVoice = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const v = speechSynthesis.getVoices();
+  csVoice = v.find(x => x.lang.replace('_', '-').toLowerCase().startsWith(lang)) || null;
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(text){
+  if(muted || !$('#speak').checked || !('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = L.speech; if(csVoice) u.voice = csVoice;
+    u.rate = .78; u.pitch = .9; u.volume = .9;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+$('#speak').checked = store.get('speak', true);
+$('#speak').addEventListener('change', e => { store.set('speak', e.target.checked); if(!e.target.checked && 'speechSynthesis' in window) speechSynthesis.cancel(); });
+
+// uvolnění těla
+const SCAN = L.scan || [
+  'Lehni si pohodlně. Ruce nech volně podél těla. Zavři oči, jestli chceš.',
+  'Pomalu se nadechni nosem… a dlouze vydechni pusou. Ještě jednou. Nikam nespěcháš.',
+  'Všimni si chodidel. Prsty, paty, nárty. Nech je ztěžknout a zabořit se do postele.',
+  'Teď lýtka. Ať jsou měkká a těžká. Není potřeba je držet.',
+  'Kolena a stehna. S každým výdechem se trochu víc uvolní.',
+  'Boky a pánev. Nech postel, ať tě celou nese.',
+  'Břicho. Ať se při dechu volně zvedá a klesá. Nemusíš ho držet.',
+  'Hrudník. Dech přichází a odchází sám. Ty se jen díváš.',
+  'Záda. Od kříže až k lopatkám. Nech je rozlévat se do podložky.',
+  'Ramena. Často v nich nosíme celý den. Nech je klesnout dolů, od uší.',
+  'Paže a lokty. Předloktí. Těžké a teplé.',
+  'Dlaně a prsty. Ať jsou volné, trochu pootevřené.',
+  'Krk a šíje. Ať hlava leží celou vahou na polštáři.',
+  'Čelist. Zuby ať se nedotýkají. Jazyk ať leží volně.',
+  'Tváře a oči. Víčka těžká. Okolí očí měkké.',
+  'Čelo. Ať se vyhladí, jako hladina vody.',
+  'Celé tělo je teď těžké, teplé a klidné. Nemusíš nic dělat.',
+  'Zůstaň tak, jak dlouho chceš. Spánek přijde sám, až bude chtít.',
+];
+const STEP_MS = 23000;
+let scanOn = false, scanI = 0, scanTimer = 0;
+const scanDots = $('#scanDots');
+SCAN.forEach(() => scanDots.appendChild(document.createElement('i')));
+function showScan(i){
+  const el = $('#scanText');
+  el.style.opacity = 0;
+  setTimeout(() => { el.textContent = SCAN[i]; el.style.opacity = 1; say(SCAN[i]); }, 900);
+  scanDots.querySelectorAll('i').forEach((d, k) => d.classList.toggle('done', k <= i));
+}
+function scanNext(){
+  if(!scanOn) return;
+  scanI++;
+  if(scanI >= SCAN.length){ scanOn = false; $('#scanBtn').textContent = T('again'); return; }
+  showScan(scanI);
+  scanTimer = setTimeout(scanNext, scanI === SCAN.length - 1 ? 30000 : STEP_MS);
+}
+function startScan(){
+  ensureAudio(); scanOn = true; scanI = 0;
+  $('#scanBtn').textContent = T('stop');
+  showScan(0); scanTimer = setTimeout(scanNext, STEP_MS);
+}
+function stopScan(){
+  scanOn = false; clearTimeout(scanTimer);
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  $('#scanBtn').textContent = T('start');
+}
+$('#scanBtn').addEventListener('click', () => scanOn ? stopScan() : startScan());
+
+// míchání myšlenek
+const WORDS = L.words || ['jablko','loďka','peřina','les','svíčka','mrak','kočka','čaj','louka','kámen','pírko','jezero','chleba','klubko','lavička',
+  'motýl','deka','strom','hrnek','vlna','mech','šiška','kopec','lampa','zahrada','borovice','med','kapka','koloběžka','rybník',
+  'okno','houba','pláž','vánek','koš','pole','slunečnice','škeble','zvon','kmen','meloun','sníh','krajka','polštář','ořech',
+  'mlýn','tulipán','hvězda','cesta','kaštan','ptáček','jablůňka','pecka','loď','dýně','věneček','studánka','perníček','lucerna','třešně'];
+let shOn = false, shTimer = 0, lastW = -1;
+function nextWord(){
+  const el = $('#word');
+  el.style.opacity = 0;
+  setTimeout(() => {
+    let i; do{ i = Math.floor(Math.random() * WORDS.length); } while(i === lastW);
+    lastW = i; el.textContent = WORDS[i]; el.style.opacity = 1;
+  }, 1500);
+}
+function startShuffle(){ shOn = true; $('#shuffleBtn').textContent = T('stop'); nextWord(); shTimer = setInterval(nextWord, 14000); }
+function stopShuffle(){ shOn = false; clearInterval(shTimer); $('#shuffleBtn').textContent = T('start'); }
+$('#shuffleBtn').addEventListener('click', () => shOn ? stopShuffle() : startShuffle());
+
+// odlož starosti
+$('#worryText').value = store.get('worries', '');
+$('#worryText').addEventListener('input', e => store.set('worries', e.target.value));
+$('#worryBtn').addEventListener('click', () => {
+  const t = $('#worryText');
+  if(!t.value.trim()){ $('#worryMsg').textContent = T('worryEmpty'); return; }
+  t.style.transition = 'opacity 2s'; t.style.opacity = 0;
+  setTimeout(() => {
+    const prev = store.get('shelf', '');
+    store.set('shelf', (prev ? prev + '\n\n' : '') + t.value.trim());
+    store.set('worries', ''); t.value = ''; t.style.opacity = 1;
+    $('#worryMsg').textContent = T('worryDone');
+    $('#shelfBtn').style.display = '';
+  }, 2000);
+});
+$('#shelfBtn').style.display = store.get('shelf', '') ? '' : 'none';
+$('#shelfBtn').addEventListener('click', () => {
+  const t = $('#worryText');
+  t.value = store.get('shelf', '') + (t.value ? '\n\n' + t.value : '');
+  store.set('worries', t.value); store.set('shelf', '');
+  $('#shelfBtn').style.display = 'none'; $('#worryMsg').textContent = '';
+});
+
+// tma
+// Na Androidu drží obrazovku „zapnutou“, ale černou – zvuk tak hraje dál.
+let darkT = 0, wake = null;
+async function darkOn(){
+  $('#dark').classList.add('on'); $('#darkMsg').style.opacity = 1;
+  clearTimeout(darkT); darkT = setTimeout(() => $('#darkMsg').style.opacity = 0, 3000);
+  try{ if('wakeLock' in navigator) wake = await navigator.wakeLock.request('screen'); }catch(e){}
+}
+function darkOff(){
+  $('#dark').classList.remove('on');
+  try{ if(wake){ wake.release(); wake = null; } }catch(e){}
+}
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && $('#dark').classList.contains('on')) darkOn(); });
+$('#goDark').addEventListener('click', darkOn);
+$('#dark').addEventListener('click', darkOff);
+
+/* ---------- DOMŮ: JAK SE CÍTÍŠ ---------- */
+const mix = m => SOUNDS.forEach(s => setLevel(s.id, m[s.id] || 0));
+const usePattern = id => { const b = document.querySelector(`#patterns .chip[data-id="${id}"]`); if(b) b.click(); };
+const setTimer = min => { const el = $('#sleepTimer'); el.value = String(min); el.dispatchEvent(new Event('change')); };
+const ACTIONS = {
+  sleepSound(){ ensureAudio(); mix({ brown:55, rain:35 }); setTimer(30); },
+  focusSound(){ ensureAudio(); mix({ brown:60, pink:20 }); },
+  seaSound(){ ensureAudio(); mix({ ocean:70, brown:15 }); },
+  quietSound(){ ensureAudio(); mix({ brown:40 }); },
+  b478(){ usePattern('478'); goTab('breath'); },
+  bBox(){ usePattern('box'); goTab('breath'); },
+  bSigh(){ usePattern('sigh'); goTab('breath'); },
+  bCoh(){ usePattern('coh'); goTab('breath'); },
+  scan(){ goTab('sleep'); openPanel('scan'); },
+  shuffle(){ goTab('sleep'); openPanel('shuffle'); },
+  worry(){ goTab('sleep'); openPanel('worry'); },
+  dark(){ darkOn(); },
+  gBubbles(){ setMode('bubbles'); goTab('game'); },
+  gStars(){ setMode('stars'); goTab('game'); },
+  gSand(){ setMode('sand'); goTab('game'); },
+  gFlies(){ setMode('flies'); goTab('game'); },
+  hFlash(){ goTab('horm'); openH('flash'); },
+  hNight(){ goTab('horm'); openH('night'); },
+  hPelvic(){ goTab('horm'); openH('pelvic'); },
+  hMove(){ goTab('horm'); openH('move'); },
+};
+const MOODS = [
+  { id:'sleep', c:'232,160,168', title:'Nemůžu spát', desc:'Ležím a nejde to. Hlava nechce vypnout.',
+    intro:'Nic nemusíš zvládnout. Stačí jít krok po kroku. Klidně usneš uprostřed.',
+    steps:[
+      ['sleepSound','Pusť si tichý šum','Hnědý šum s deštěm. Za 30 minut sám pomalu ztichne.'],
+      ['b478','Dýchání 4·7·8','Tři až čtyři pomalé cykly. Dlouhý výdech zklidní tělo.'],
+      ['scan','Uvolnění těla','Klidný hlas tě provede od chodidel až k hlavě.'],
+      ['shuffle','Míchání myšlenek','Když se myšlenky pořád vrací, představuj si jednoduchá slova.'],
+      ['dark','Zhasni obrazovku','Telefon zůstane černý a zvuk bude hrát dál.'],
+    ] },
+  { id:'stress', c:'240,181,138', title:'Jsem ve stresu', desc:'Sevřený žaludek, rychlý dech, starosti.',
+    intro:'Nejdřív tělo, potom hlava. Pár minut stačí.',
+    steps:[
+      ['bSigh','Dva povzdechy','Dva nádechy nosem a dlouhý výdech. Nejrychlejší úleva.'],
+      ['bBox','Krabicové dýchání','Pravidelný rytmus 4·4·4·4 na pár minut.'],
+      ['worry','Odlož starosti','Napiš, co tě trápí. Ráno to tu počká.'],
+      ['seaSound','Moře','Pomalé vlny na pozadí.'],
+      ['gSand','Zen zahrádka','Hrab do písku. Nic víc.'],
+    ] },
+  { id:'over', c:'190,170,225', title:'Je toho na mě moc', desc:'Hluk, lidi, úkoly. Potřebuju vypnout.',
+    intro:'Ubereme podnětů. Méně světla, méně zvuku, jedna jednoduchá věc.',
+    steps:[
+      ['quietSound','Jemný hnědý šum','Přikryje okolní hluk jako deka.'],
+      ['bSigh','Povzdech','Pár opakování a ramena povolí.'],
+      ['gBubbles','Mačkej bublinky','Jednoduchá věc pro ruce, hlava si odpočine.'],
+      ['dark','Pět minut tmy','Zhasni obrazovku a jen dýchej s tečkou.'],
+    ] },
+  { id:'restless', c:'150,195,180', title:'Neklidná hlava', desc:'Nemůžu se soustředit, myšlenky skáčou.',
+    intro:'Dáme hlavě něco malého, čeho se může chytit.',
+    steps:[
+      ['focusSound','Šum na soustředění','Hnědý a růžový šum. Mnoha lidem s neklidnou hlavou pomáhá.'],
+      ['bCoh','Rovnoměrné dýchání','Nádech a výdech stejně dlouho, bez zadržování.'],
+      ['gStars','Spojuj hvězdy','Klidná hra na pár minut.'],
+      ['gFlies','Světlušky','Pomalé dotýkání světel na hladině.'],
+    ] },
+  { id:'horm', c:'235,150,120', title:'', desc:'', intro:'',
+    steps:[['hFlash','',''],['hNight','',''],['hPelvic','',''],['hMove','','']] },
+];
+MOODS.forEach(m => {
+  const tr = L.moods[m.id];
+  if(tr){ m.title = tr.title; m.desc = tr.desc; m.intro = tr.intro; m.steps.forEach((st, i) => { if(tr.steps[i]){ st[1] = tr.steps[i][0]; st[2] = tr.steps[i][1]; } }); }
+});
+MOODS.forEach(m => {
+  const b = document.createElement('button');
+  b.className = 'mood'; b.style.setProperty('--c', m.c);
+  b.innerHTML = `<i></i><b>${m.title}</b><span>${m.desc}</span>`;
+  b.addEventListener('click', () => openPlan(m));
+  $('#moods').appendChild(b);
+});
+function openPlan(m){
+  $('#moodMenu').style.display = 'none';
+  $('#plan').classList.add('open');
+  $('#planTitle').textContent = m.title;
+  $('#planIntro').textContent = m.intro;
+  const box = $('#planSteps'); box.innerHTML = '';
+  m.steps.forEach(([act, t, d], i) => {
+    const s = document.createElement('button');
+    s.className = 'step'; s.innerHTML = `<em>${i + 1}</em><div><b>${t}</b><small>${d}</small></div>`;
+    s.addEventListener('click', () => { s.classList.add('did'); ACTIONS[act](); });
+    box.appendChild(s);
+  });
+  store.set('mood', m.id);
+}
+$('#planBack').addEventListener('click', () => { $('#plan').classList.remove('open'); $('#moodMenu').style.display = ''; });
+// pozdrav podle denní doby, sám se mění
+const GREETS = [
+  { to:5,  t:'Dobrou noc',     l:'Je hluboká noc. Nemusíš nic, jsem tady.' },
+  { to:9,  t:'Dobré ráno',     l:'Nový den začíná pomalu.' },
+  { to:12, t:'Dobré dopoledne', l:'Chvilka pro sebe se vždycky hodí.' },
+  { to:17, t:'Dobré odpoledne', l:'Zastav se na pár nádechů.' },
+  { to:22, t:'Dobrý večer',    l:'Den se chýlí ke konci.' },
+  { to:24, t:'Dobrou noc',     l:'Pomalu se připrav ke spánku.' },
+];
+GREETS.forEach((g, i) => { if(L.greets[i]){ g.t = L.greets[i][0]; g.l = L.greets[i][1]; } });
+function greet(){
+  const h = new Date().getHours(), gr = GREETS.find(x => h < x.to);
+  if($('#hello').textContent !== gr.t){ $('#hello').textContent = gr.t; $('#helloLine').textContent = gr.l; }
+}
+greet();
+setInterval(greet, 60000);
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') greet(); });
+
+// sdílení
+const toast = (msg, ms = 2600) => { const el = $('#toast'); el.textContent = msg; el.classList.toggle('long', ms > 3000); el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), ms); };
+
+// přidání na plochu (Android / Chrome)
+let installEv = null;
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+if(!standalone && location.protocol.startsWith('http')) $('#install').hidden = false;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEv = e; $('#install').hidden = false; });
+window.addEventListener('appinstalled', () => { $('#install').hidden = true; toast(T('installed')); });
+$('#installBtn').addEventListener('click', async () => {
+  if(installEv){ installEv.prompt(); try{ await installEv.userChoice; }catch(e){} installEv = null; return; }
+  const ios = /iphone|ipad/i.test(navigator.userAgent);
+  toast(ios ? T('iosInstall') : T('androidInstall'), 9000);
+});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+$('#share').addEventListener('click', async () => {
+  const data = { title: T('brand') + ' – ' + T('tagline'), text: T('shareText'), url: location.href.split('#')[0] };
+  if(navigator.share){ try{ await navigator.share(data); }catch(e){} return; }
+  try{ await navigator.clipboard.writeText(data.url); toast(T('copied')); }
+  catch(e){ prompt(T('copyPrompt'), data.url); }
+});
+
+/* ---------- HORMONY ---------- */
+const HM = L.horm || window.I18N.cs.horm;
+document.querySelectorAll('#hormMenu [data-hopen]').forEach(b => {
+  const k = b.dataset.hopen, key = 'h' + k[0].toUpperCase() + k.slice(1);
+  b.querySelector('b').textContent = HM[key + 'T']; b.querySelector('span').textContent = HM[key + 'D'];
+  b.addEventListener('click', () => openH(k));
+});
+$('#hormHint').textContent = HM.hint; $('#hormCare').textContent = HM.care;
+document.querySelectorAll('[data-hclose]').forEach(b => { b.textContent = T('back'); b.addEventListener('click', closeH); });
+function openH(id){
+  ['#hormMenu', '#hormHint', '#hormCare'].forEach(x => $(x).style.display = 'none');
+  document.querySelectorAll('#horm .panel').forEach(p => p.classList.toggle('open', p.id === 'h-' + id));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function closeH(){
+  stopHorm();
+  document.querySelectorAll('#horm .panel').forEach(p => p.classList.remove('open'));
+  ['#hormMenu', '#hormHint', '#hormCare'].forEach(x => $(x).style.display = '');
+}
+function stopHorm(){ stopFlash(); stopPelvic(); stopMove(); }
+
+// když přijde nával – vedené zchlazení
+let flOn = false, flI = 0, flT = 0;
+const flDots = $('#flashDots');
+HM.flash.forEach(() => flDots.appendChild(document.createElement('i')));
+$('#flashText').textContent = HM.flashIntro; $('#flashBtn').textContent = T('start');
+function showFlash(i){
+  const el = $('#flashText'); el.style.opacity = 0;
+  setTimeout(() => { el.textContent = HM.flash[i]; el.style.opacity = 1; say(HM.flash[i]); }, 700);
+  flDots.querySelectorAll('i').forEach((d, k) => d.classList.toggle('done', k <= i));
+}
+function flashNext(){
+  if(!flOn) return;
+  flI++;
+  if(flI >= HM.flash.length){ flOn = false; flT = 0; $('#flashBtn').textContent = T('again'); return; }
+  showFlash(flI); flT = setTimeout(flashNext, 14000);
+}
+function startFlash(){ ensureAudio(); flOn = true; flI = 0; $('#flashBtn').textContent = T('stop'); showFlash(0); flT = setTimeout(flashNext, 14000); }
+function stopFlash(){
+  if(!flOn && !flT) return;
+  flOn = false; clearTimeout(flT); flT = 0;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  $('#flashBtn').textContent = T('start');
+}
+$('#flashBtn').addEventListener('click', () => flOn ? stopFlash() : startFlash());
+
+// pánevní dno – stáhni / povol
+const LV = [{ h:3, r:3, n:10 }, { h:5, r:5, n:10 }, { h:8, r:8, n:8 }];
+let lv = store.get('pelvicLv', 0), pOn = false, pRep = 0, pPh = 'sq', pStart = 0, pRaf = 0;
+if(!LV[lv]) lv = 0;
+HM.levels.forEach((name, i) => {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.textContent = `${name} · ${LV[i].h} s`; b.dataset.i = i; b.setAttribute('role', 'radio');
+  b.addEventListener('click', () => { lv = i; store.set('pelvicLv', i); renderLv(); if(pOn){ stopPelvic(); startPelvic(); } });
+  $('#levels').appendChild(b);
+});
+function renderLv(){ document.querySelectorAll('#levels .chip').forEach(b => b.setAttribute('aria-checked', +b.dataset.i === lv)); }
+renderLv();
+$('#kPhase').textContent = T('ready'); $('#pelvicBtn').textContent = T('start'); $('#pelvicHint').textContent = HM.pelvicHint;
+function pCue(){
+  $('#kPhase').textContent = pPh === 'sq' ? HM.squeeze : HM.relax;
+  if($('#chime').checked) tone(pPh === 'sq' ? 392 : 294, 1.2, .05);
+  if($('#vibe').checked && navigator.vibrate) navigator.vibrate(pPh === 'sq' ? 60 : 20);
+}
+function startPelvic(){ ensureAudio(); pOn = true; pRep = 1; pPh = 'sq'; pStart = performance.now(); $('#pelvicBtn').textContent = T('stop'); pCue(); pRaf = requestAnimationFrame(pFrame); }
+function stopPelvic(){
+  if(!pOn) return;
+  pOn = false; cancelAnimationFrame(pRaf);
+  $('#pelvicBtn').textContent = T('start'); $('#kPhase').textContent = T('ready'); $('#kCount').textContent = '';
+  $('#kOrb').style.transform = 'scale(1)';
+}
+function pFrame(now){
+  if(!pOn) return;
+  const cfg = LV[lv], dur = pPh === 'sq' ? cfg.h : cfg.r;
+  let el = (now - pStart) / 1000;
+  if(el >= dur){
+    if(pPh === 'sq') pPh = 'rel';
+    else {
+      if(pRep >= cfg.n){
+        pOn = false; $('#kPhase').textContent = HM.pelvicDone; $('#kCount').textContent = '';
+        $('#pelvicBtn').textContent = T('again'); $('#kOrb').style.transform = 'scale(1)';
+        if($('#chime').checked) tone(523, 2, .05);
+        return;
+      }
+      pRep++; pPh = 'sq';
+    }
+    pStart = now; el = 0; pCue();
+  }
+  const k = Math.min(1, el / .7), sc = pPh === 'sq' ? 1 - .35 * k : .65 + .35 * k;
+  $('#kOrb').style.transform = `scale(${sc})`;
+  $('#kCount').textContent = `${Math.ceil(dur - el)} s · ${pRep} / ${cfg.n}`;
+  pRaf = requestAnimationFrame(pFrame);
+}
+$('#pelvicBtn').addEventListener('click', () => pOn ? stopPelvic() : startPelvic());
+
+// kosti a rovnováha – cviky s časovačem
+const REST = 20;
+let mI = 0, mPh = 'work', mLeft = 0, mOn = false, mInt = 0;
+$('#moveIntro').textContent = HM.moveIntro; $('#moveBtn').textContent = T('start');
+$('#exPrev').setAttribute('aria-label', HM.prev); $('#exNext').setAttribute('aria-label', HM.next);
+function mRender(){
+  const e = HM.ex[mI];
+  $('#exNum').textContent = `${mI + 1} / ${HM.ex.length}`;
+  $('#exName').textContent = mPh === 'rest' ? HM.rest : e[0];
+  $('#exDesc').textContent = mPh === 'rest' ? `${HM.next}: ${e[0]}` : e[1];
+  $('#exTime').textContent = fmt((mLeft || (mPh === 'rest' ? REST : e[2])) * 1000);
+}
+function mStartEx(){ mPh = 'work'; mLeft = HM.ex[mI][2]; say(HM.ex[mI][0] + '. ' + HM.ex[mI][1]); if($('#chime').checked) tone(440, 1, .05); mRender(); }
+function mTick(){
+  mLeft--;
+  if(mLeft > 0 && mLeft <= 3 && $('#chime').checked) tone(660, .25, .03);
+  if(mLeft <= 0){
+    if(mPh === 'work'){
+      if(mI >= HM.ex.length - 1){ finishMove(); return; }
+      mI++; mPh = 'rest'; mLeft = REST; if($('#chime').checked) tone(330, 1, .05);
+    } else { mStartEx(); return; }
+  }
+  mRender();
+}
+function startMove(){ ensureAudio(); mOn = true; $('#moveBtn').textContent = HM.pause; if(!mLeft) mStartEx(); else mRender(); mInt = setInterval(mTick, 1000); }
+function pauseMove(){ mOn = false; clearInterval(mInt); $('#moveBtn').textContent = T('start'); if('speechSynthesis' in window) speechSynthesis.cancel(); }
+function finishMove(){
+  mOn = false; clearInterval(mInt); mLeft = 0; mPh = 'work'; mI = 0;
+  $('#moveBtn').textContent = T('again');
+  $('#exNum').textContent = ''; $('#exName').textContent = HM.moveDone; $('#exDesc').textContent = ''; $('#exTime').textContent = '';
+  say(HM.moveDone); if($('#chime').checked) tone(523, 2, .05);
+}
+function stopMove(){
+  if(!mOn && !mLeft) return;
+  if(mOn && 'speechSynthesis' in window) speechSynthesis.cancel();
+  mOn = false; clearInterval(mInt); mLeft = 0; mPh = 'work';
+  $('#moveBtn').textContent = T('start'); mRender();
+}
+function mJump(d){
+  mI = Math.max(0, Math.min(HM.ex.length - 1, mI + d));
+  if(mOn){ mStartEx(); } else { mLeft = 0; mPh = 'work'; mRender(); }
+}
+$('#moveBtn').addEventListener('click', () => mOn ? pauseMove() : startMove());
+$('#exPrev').addEventListener('click', () => mJump(-1));
+$('#exNext').addEventListener('click', () => mJump(1));
+mRender();
+
+// noční pocení
+HM.tips.forEach(tp => { const li = document.createElement('li'); li.textContent = tp; $('#tips').appendChild(li); });
+$('#nightPlay').textContent = HM.nightPlay; $('#nightCalm').textContent = HM.nightCalm; $('#nightDark').textContent = HM.nightDark;
+$('#nightPlay').addEventListener('click', () => { ensureAudio(); mix({ fan:45, rain:25 }); toast('✓ ' + HM.nightPlay); });
+$('#nightCalm').addEventListener('click', () => openH('flash'));
+$('#nightDark').addEventListener('click', darkOn);
+
+/* ---------- USÍNACÍ ČASOVAČ ---------- */
+let timerEnd = 0, timerInt = 0, fading = false;
+const FADE_MS = 90000;
+function fmt(ms){ const s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+function resetMaster(){ if(!master) return; const t = ctx.currentTime; master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(1, t); }
+function clearTimer(){ clearInterval(timerInt); timerEnd = 0; fading = false; $('#timeLeft').textContent = ''; }
+$('#sleepTimer').addEventListener('change', e => {
+  const min = +e.target.value;
+  clearTimer(); resetMaster();
+  if(!min) return;
+  ensureAudio();
+  timerEnd = Date.now() + min * 60000;
+  timerInt = setInterval(tick, 1000); tick();
+});
+function tick(){
+  const rem = timerEnd - Date.now();
+  $('#timeLeft').textContent = fmt(rem);
+  if(rem <= FADE_MS && !fading && master){
+    fading = true;
+    const t = ctx.currentTime;
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value, t);
+    master.gain.linearRampToValueAtTime(.0001, t + Math.max(1, rem / 1000));
+  }
+  if(rem <= 0){
+    clearTimer();
+    SOUNDS.forEach(s => setLevel(s.id, 0));
+    if(breathing) stopBreath();
+    stopScan(); stopShuffle(); stopHorm();
+    $('#sleepTimer').value = '0';
+    setTimeout(resetMaster, 1500);
+  }
+}
+})();
+</script>
+</body>
+</html>
